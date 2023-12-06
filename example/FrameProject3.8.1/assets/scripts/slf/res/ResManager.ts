@@ -2,6 +2,7 @@ import { Asset, assetManager } from "cc";
 import { Singleton } from "../common/Singleton";
 import { BundleResData } from "./BundleResData";
 import { ResTask } from "./ResTask";
+import ObjPoolUtils from "../utils/ObjPoolUtils";
 
 /**
  * 资源管理模块
@@ -14,11 +15,9 @@ export class ResManager extends Singleton {
     /**使用的bundle */
     private useBundleMap: Map<string, string> = new Map();
 
-    /**任务池 */
-    private taskPool: ResTask[] = [];
-    /**任务列表 */
+    /**待执行任务列表 */
     private taskList: ResTask[] = [];
-    /**执行中的任务 用于取消加载 */
+    /**执行中的任务 */
     private loadIn: ResTask[] = [];
 
     /**最大加载 */
@@ -28,15 +27,18 @@ export class ResManager extends Singleton {
      * 取消加载
      * 未执行的任务，直接取消执行
      * 执行中的任务，执行完成不会回调
+     * @param owner 持有者
      */
     public cancelLoad(owner: any): void {
         let id = owner.uuid;
         if (this.useBundleMap.has(id)) {
-            this.taskList.filter((task) => {
-                task.target.uuid != id;
-            });
+            for (let i = this.taskList.length - 1; i >= 0; i--) {
+                if (this.taskList[i].target.uuid == id) {
+                    this.recycleResTask(this.taskList.splice(i, 1)[0]);
+                }
+            }
 
-            this.loadIn.forEach((task) => {
+            this.loadIn.forEach(task => {
                 task.isCancel = task.target.uuid == id;
             });
         }
@@ -44,13 +46,14 @@ export class ResManager extends Singleton {
 
     /**
     * 销毁已经动态加载的资源
+     * @param owner 持有者
     */
-    public destroy(target: any): void {
-        if (this.useBundleMap.has(target.uuid)) {
-            this.cancelLoad(target);
-            let bundle = this.useBundleMap.get(target.uuid);
-            this.useBundleMap.delete(target.uuid);
-            this.resMap.get(bundle).deleteAsset(target);
+    public destroy(owner: any): void {
+        if (this.useBundleMap.has(owner.uuid)) {
+            this.cancelLoad(owner);
+            let bundle = this.useBundleMap.get(owner.uuid);
+            this.useBundleMap.delete(owner.uuid);
+            this.resMap.get(bundle).deleteAsset(owner);
         }
     }
 
@@ -125,20 +128,15 @@ export class ResManager extends Singleton {
 
     /**获取资源任务 */
     private getResTask(url: string, type: Asset, owner: any, callback: Function, target: any, bundleName: string): ResTask {
-        let task: ResTask;
-        if (this.taskPool.length) {
-            task = this.taskPool.shift();
-        } else {
-            task = new ResTask();
-        }
+        let task: ResTask = ObjPoolUtils.getObj(ResTask)
         task.init(url, type, owner, callback, target, bundleName);
 
         if (!this.resMap.get(bundleName)) {
             this.resMap.set(bundleName, new BundleResData());
         }
 
-        if (!this.useBundleMap.get(task.target.uuid)) {
-            this.useBundleMap.set(task.target.uuid, bundleName);
+        if (!this.useBundleMap.get(task.owner.uuid)) {
+            this.useBundleMap.set(task.owner.uuid, bundleName);
         }
         return task;
     }
@@ -150,6 +148,6 @@ export class ResManager extends Singleton {
             this.loadIn.splice(idx, 1);
         }
         task.recycle();
-        this.taskPool.push(task);
+        ObjPoolUtils.recycleObj(task);
     }
 }

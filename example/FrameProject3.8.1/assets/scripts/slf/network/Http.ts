@@ -1,5 +1,3 @@
-import { Logger } from "../Logger";
-
 /**http请求类型 */
 export enum HTTP_TYPE {
 	GET = 1,
@@ -51,7 +49,7 @@ export default class Http {
 	 * @param errCb 异常回调
 	 * @param sync 是否同步
 	 */
-	public static get(url, cb?: Function, thisArg?: any, errCb?: Function,sync?:boolean): void {
+	public static get(url, cb?: Function, thisArg?: any, errCb?: Function, sync?: boolean): void {
 		let http: Http = this.httpQueue.length ? this.httpQueue.shift() : new Http();
 		let data: IHttpData = {
 			url: url,
@@ -59,7 +57,7 @@ export default class Http {
 			cb: cb,
 			cbT: thisArg,
 			errCb: errCb,
-			sync:sync
+			sync: sync
 		};
 		http.data = data;
 		http.reqMsg();
@@ -74,7 +72,7 @@ export default class Http {
 	 * @param thisArg 回调作用域
 	 * @param errCb 异常回调
 	 */
-	public static post(url, data, cb?: Function, thisArg?: any, errCb?: Function,sync?:boolean): void {
+	public static post(url, data, cb?: Function, thisArg?: any, errCb?: Function, sync?: boolean): void {
 		let http: Http = this.httpQueue.length ? this.httpQueue.shift() : new Http();
 		let datas: IHttpData = {
 			url: url,
@@ -83,7 +81,7 @@ export default class Http {
 			cb: cb,
 			cbT: thisArg,
 			errCb: errCb,
-			sync:sync
+			sync: sync
 		};
 		http.data = datas;
 		http.reqMsg();
@@ -98,7 +96,7 @@ export default class Http {
 		}
 		var httpData = this.data;
 
-		if(httpData.sync){
+		if (httpData.sync) {
 			// LoadingManager.getInstance().show(LoadingTypeEnum.Circle,"通信中...");
 			//显示loading
 		}
@@ -111,13 +109,10 @@ export default class Http {
 			method = "POST";
 			data = JSON.stringify(httpData.data);
 		}
-		Logger.log("http request =="+url+data);
+		console.log("http request ==" + url + data);
 		var xhr = this.xhr;
 		xhr.open(method, url, true);
-		xhr.setRequestHeader("Content-Type", header);		
-		// xhr.setRequestHeader("token", Global.token);
-		// xhr.setRequestHeader("game", Global.gameId);
-		// xhr.setRequestHeader("username", Global.encodeUserName);
+		xhr.setRequestHeader("Content-Type", header);
 
 		xhr.send(data);
 	}
@@ -128,7 +123,7 @@ export default class Http {
 			request = event
 		}
 		request.data = request.response
-		Logger.log("http response =="+request.data);
+		console.log("http response ==" + request.data);
 		let temp = JSON.parse(request.data);
 		var cb = this.data.cb;
 		var cbT = this.data.cbT;
@@ -144,7 +139,7 @@ export default class Http {
 	}
 
 	private reset() {
-		if(this.data.sync){
+		if (this.data.sync) {
 			//隐藏loading
 			// LoadingManager.getInstance().hide(LoadingTypeEnum.Circle);
 		}

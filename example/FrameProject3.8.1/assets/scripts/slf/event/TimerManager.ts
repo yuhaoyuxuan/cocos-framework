@@ -1,7 +1,6 @@
 import { SingletonComponent } from "../common/SingletonComponent";
 import ObjIdGeneraterUtils from "../utils/ObjIdGeneraterUtils";
 import ObjPoolUtils from "../utils/ObjPoolUtils";
-import TimerUtils from "../utils/TimerUtils";
 import { TimerData } from "./TimerData";
 
 /**

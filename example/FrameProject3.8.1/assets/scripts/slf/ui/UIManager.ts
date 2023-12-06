@@ -3,10 +3,9 @@ import UIPopup from "./UIPopup";
 import UILayer from "./UILayer";
 import UIData from "./base/UIData";
 import UIController from "./UIController";
-import { Logger } from "../Logger";
 import { ResManager } from "../res/ResManager";
 import { Singleton } from "../common/Singleton";
-import { Node, Prefab, Widget, assetManager, instantiate } from "cc";
+import { Node, Prefab, Widget, instantiate } from "cc";
 
 /**
  * ui界面管理类
@@ -44,7 +43,7 @@ export default class UIManager extends Singleton {
 		this.layer.initRoot(uiRoot);
 	}
 
-	
+
 	/**
 	 * 打开ui界面
 	 * @param uiId 界面位移id

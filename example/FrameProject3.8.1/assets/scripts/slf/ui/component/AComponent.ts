@@ -1,8 +1,8 @@
 import EventManager from "../../event/EventManager";
+import { TimerManager } from "../../event/TimerManager";
 import { ResManager } from "../../res/ResManager";
 import ComponentFindUtils from "../../utils/ComponentFindUtils";
-import TimerUtils from "../../utils/TimerUtils";
-import { Asset, Component, Prefab, _decorator } from "cc";
+import { Asset, Component, _decorator } from "cc";
 
 /**
  * cc.Component组件扩展 框架内所有ui组件的基类
@@ -34,7 +34,7 @@ export default abstract class AComponent extends Component {
         this.destroyView();
         ResManager.Instance().destroy(this);
         EventManager.Instance().targetOff(this);
-        TimerUtils.unRegister(this);
+        TimerManager.Instance().targetOff(this);
         ComponentFindUtils.destroy(this);
     }
     /**初始化事件 */
