@@ -2,7 +2,7 @@ import { _decorator, assetManager, Component, Node, Prefab, repeat, resources } 
 import { ResManager } from '../scripts/slf/res/ResManager';
 import UIManager from '../scripts/slf/ui/UIManager';
 import UIData from '../scripts/slf/ui/base/UIData';
-import { TimerManager } from '../scripts/slf/event/TimerManager';
+import { TimerManager } from '../scripts/slf/timer/TimerManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('TestUI')
