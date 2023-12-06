@@ -1,6 +1,6 @@
 import EventManager from "../../event/EventManager";
-import { TimerManager } from "../../event/TimerManager";
 import { ResManager } from "../../res/ResManager";
+import { TimerManager } from "../../timer/TimerManager";
 import ComponentFindUtils from "../../utils/ComponentFindUtils";
 import { Asset, Component, _decorator } from "cc";
 
