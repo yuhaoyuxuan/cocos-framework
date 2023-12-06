@@ -1,0 +1,1 @@
+"use strict";module.exports={description:"复制预制体组件"};

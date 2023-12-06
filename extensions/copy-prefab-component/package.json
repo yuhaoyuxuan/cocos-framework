@@ -1,0 +1,39 @@
+{
+    "package_version": 2,
+    "version": "1.0.0",
+    "name": "copy-prefab-component",
+    "description": "i18n:copy-prefab-component.description",
+    "main": "./dist/main.js",
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:menu.panel/i18n:copy-prefab-component.description",
+                "label": "i18n:copy-prefab-component.description",
+                "message": "copy-prefab-component:start"
+            }
+        ],
+        "messages": {
+            "copy-prefab-component:start": {
+                "methods": [
+                    "copy"
+                ]
+            },
+            "scene:ready": {
+                "methods": [
+                    "openPrefab"
+                ]
+            }
+        }
+    },
+    "dependencies": {
+        "@types/node": "^14.5.2",
+        "copy-paste": "^1.5.3",
+        "node-uuid": "^1.4.8"
+    },
+    "author": "slf",
+    "editor": ">=3.5.2",
+    "scripts": {
+        "build": "tsc -b",
+        "watch": "tsc -w"
+    }
+}

@@ -1,0 +1,1 @@
+"use strict";module.exports={description:"Copy Prefab Component Name"};
