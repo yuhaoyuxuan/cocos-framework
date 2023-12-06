@@ -49,6 +49,15 @@ export class FSMController {
     public update(dt: number): void {
         this.currentState?.update(dt);
     }
+
+    /**销毁状态机 */
+    public onDestroy(): void {
+        this.currentState = null;
+        this.stateMap.forEach(v => {
+            v.onDestroy();
+        })
+        this.stateMap.clear();
+    }
 }
 
 

@@ -8,6 +8,7 @@ export abstract class StateBase implements IState {
     public entry(): void { }
     public update(dt: number): void { }
     public exit(): void { }
+    public onDestroy(): void {}
 }
 
 

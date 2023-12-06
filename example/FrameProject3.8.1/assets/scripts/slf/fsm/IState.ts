@@ -12,6 +12,8 @@ export interface IState {
     update(dt: number): void
     /**退出状态 */
     exit(): void
+    /**销毁此状态 */
+    onDestroy(): void
 }
 
 
