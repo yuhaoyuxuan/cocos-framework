@@ -2,6 +2,7 @@ import { IState } from "./IState";
 
 /**
  * 有限状态机控制器
+ * Finite State Machine(FSM)
  * @author slf
  */
 export class FSMController {
