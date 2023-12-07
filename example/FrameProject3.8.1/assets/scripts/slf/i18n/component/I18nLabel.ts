@@ -10,7 +10,7 @@ const { ccclass, property , requireComponent,menu} = _decorator;
 @ccclass('I18nLabel')
 @menu('I18n/I18nLabel')
 export class I18nLabel extends I18nComponentBase {
-    @property({type:CCString})
+    @property
     private _key:string = "";
     @property({tooltip:"多语言key"})
     public get key() : string { return this._key;}

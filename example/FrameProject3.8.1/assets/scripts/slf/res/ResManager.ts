@@ -1,4 +1,4 @@
-import { Asset, assetManager } from "cc";
+import { Asset, AssetManager, assetManager } from "cc";
 import { Singleton } from "../common/Singleton";
 import { BundleResData } from "./BundleResData";
 import { ResTask } from "./ResTask";
@@ -11,7 +11,7 @@ import ObjPoolUtils from "../utils/ObjPoolUtils";
  */
 export class ResManager extends Singleton {
     /**bundle数据 */
-    private resMap: Map<string, BundleResData> = new Map();
+    private bundleResMap: Map<string, BundleResData> = new Map();
     /**使用的bundle */
     private useBundleMap: Map<string, string> = new Map();
 
@@ -22,6 +22,43 @@ export class ResManager extends Singleton {
 
     /**最大加载 */
     private MaxValue = 10;
+
+
+    /**
+     * 加载包数据
+     * @param name 包名 
+     * @param callback 完成回调
+     */
+    public loadBundle(name: string, callback: Function, target: any): void {
+        if (this.bundleResMap.has(name)) {
+            callback.call(target, this.bundleResMap.get(name).bundle);
+            return;
+        }
+
+        assetManager.loadBundle(name, (err, bundle: AssetManager.Bundle) => {
+            if (err) {
+                console.error(err)
+                callback.call(target, err);
+                return;
+            }
+            this.bundleResMap.set(name, new BundleResData(bundle));
+            callback.call(target, bundle);
+        })
+    }
+
+    /**
+     * 销毁包数据
+     * @param name 
+     */
+    public destroyBundle(name: string): void {
+        if (!this.bundleResMap.has(name)) {
+            console.error("destroyBundle none bundle data name=" + name);
+            return;
+        }
+        this.bundleResMap.get(name).destroy();
+        this.bundleResMap.delete(name);
+    }
+
 
     /**
      * 取消加载
@@ -53,7 +90,7 @@ export class ResManager extends Singleton {
             this.cancelLoad(owner);
             let bundle = this.useBundleMap.get(owner.uuid);
             this.useBundleMap.delete(owner.uuid);
-            this.resMap.get(bundle).deleteAsset(owner);
+            this.bundleResMap.get(bundle).deleteAsset(owner);
         }
     }
 
@@ -79,9 +116,10 @@ export class ResManager extends Singleton {
         }
 
         let task: ResTask = this.taskList.shift();
+        let bRes: BundleResData = this.bundleResMap.get(task.bundleName);
         //获取缓存的资源
-        if (this.resMap.has(task.bundleName)) {
-            let asset = this.resMap.get(task.bundleName).getCacheAsset(task);
+        if (bRes) {
+            let asset = bRes.getCacheAsset(task);
             if (asset != null) {
                 this.loadComplete(task, asset);
                 return;
@@ -93,7 +131,7 @@ export class ResManager extends Singleton {
         if (reg.test(task.url)) {
             assetManager.loadRemote(task.url, this.parseAsset.bind(this, task));
         } else {
-            assetManager.getBundle(task.bundleName).load(task.url, this.parseAsset.bind(this, task));
+            bRes.bundle.load(task.url, this.parseAsset.bind(this, task));
         }
     }
 
@@ -118,7 +156,7 @@ export class ResManager extends Singleton {
      * @param asset 
      */
     private loadComplete(task: ResTask, asset: Asset): void {
-        this.resMap.get(task.bundleName).cacheAsset(task, asset);
+        this.bundleResMap.get(task.bundleName).cacheAsset(task, asset);
         task.complete(asset);
         this.recycleResTask(task);
 
@@ -131,8 +169,13 @@ export class ResManager extends Singleton {
         let task: ResTask = ObjPoolUtils.getObj(ResTask)
         task.init(url, type, owner, callback, target, bundleName);
 
-        if (!this.resMap.get(bundleName)) {
-            this.resMap.set(bundleName, new BundleResData());
+        if (!this.bundleResMap.get(bundleName)) {
+            let bundle = assetManager.getBundle(bundleName);
+            if (!bundle) {
+                console.error("none bundle data name=" + bundleName);
+                return;
+            }
+            this.bundleResMap.set(bundleName, new BundleResData(bundle));
         }
 
         if (!this.useBundleMap.get(task.owner.uuid)) {

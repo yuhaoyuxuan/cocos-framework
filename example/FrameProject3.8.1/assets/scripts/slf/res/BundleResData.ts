@@ -1,15 +1,33 @@
-import { Asset } from "cc";
+import { Asset, AssetManager } from "cc";
 import { ResTask } from "./ResTask";
-/**包数据记录 */
+/**
+ * 包数据
+ * 记录资源使用的映射关系和缓存
+ * @author slf
+ */
 export class BundleResData {
+    /**包 */
+    public bundle: AssetManager.Bundle;
     /**id对应资源数组 */
-    private idToAssetsMap: Map<string, Asset[]> = new Map();
+    private idToAssetsMap: Map<string, Asset[]>
     /**缓存的资源 */
-    private urlToAssetMap: Map<string, Asset> = new Map();
+    private urlToAssetMap: Map<string, Asset>
 
+    constructor(bundle: AssetManager.Bundle) {
+        this.bundle = bundle;
+        this.idToAssetsMap = new Map();
+        this.urlToAssetMap = new Map();
+    }
+
+
+    /**销毁资源 */
     public destroy(): void {
         this.idToAssetsMap.clear();
         this.urlToAssetMap.clear();
+        this.idToAssetsMap = null;
+        this.urlToAssetMap = null;
+        this.bundle.releaseAll();
+        this.bundle = null;
     }
 
     /**

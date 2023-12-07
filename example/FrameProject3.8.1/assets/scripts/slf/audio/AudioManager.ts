@@ -10,19 +10,33 @@ export class AudioManager extends SingletonComponent {
     /**音量 */
     private volumeScale: number = 1;
 
+    private isOpen: boolean;
+
     protected init(): void {
         this.audioSource = this.node.getComponent(AudioSource);
+    }
 
-        this.audioSource
+    /**
+     * 音频开关
+     * @param isOpen 
+     */
+    public onOff(isOpen: boolean): void {
+        this.isOpen = isOpen;
+        if (!this.isOpen) {
+            this.audioSource.pause();
+        } else {
+            this.audioSource.play();
+        }
     }
 
     /**播放音效 */
     public play(clip: string | AudioClip): void {
+
     }
 
     /**播放背景音乐 */
     public playBg(clip: string | AudioClip, loop: boolean): void {
-
+        
     }
 }
 

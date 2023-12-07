@@ -9,13 +9,19 @@ export default class UIController {
     // this.register(new UIData(1, "test/prefabs/testUI"))
     // this.register(new UIData(2, "test/prefabs/testUI1", "resources"))
     // this.register(new UIData(2, "test/prefabs/testUI1", "resources", false));
-    
+
     /**
      * 注册ui数据
-     * @param uiId ui唯一标识
      * @param data ui数据
      */
-    public register(data: UIData): void {
+    public register(data: UIData | UIData[]): void {
+        if (Array.isArray(data)) {
+            data.forEach(v => {
+                this.register(v);
+            })
+            return;
+        }
+
         if (this.uiDataMap.has(data.id)) {
             console.error("register error id same =" + data.id);
         }
