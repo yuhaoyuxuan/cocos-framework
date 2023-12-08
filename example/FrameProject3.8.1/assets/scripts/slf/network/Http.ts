@@ -35,7 +35,7 @@ export default class Http {
 	 * 发送http请求
 	 * @param data 数据结构 
 	 */
-	public static send(data: IHttpData): void {
+	private static send(data: IHttpData): void {
 		let httpc: Http = this.httpQueue.length ? this.httpQueue.shift() : new Http();
 		httpc.data = data;
 		httpc.reqMsg();
@@ -45,17 +45,17 @@ export default class Http {
 	 * get请求
 	 * @param url 请求地址
 	 * @param cb 完成回调
-	 * @param thisArg 回调作用域
+	 * @param target 回调作用域
 	 * @param errCb 异常回调
 	 * @param sync 是否同步
 	 */
-	public static get(url, cb?: Function, thisArg?: any, errCb?: Function, sync?: boolean): void {
+	public static get(url, cb?: Function, target?: any, errCb?: Function, sync?: boolean): void {
 		let http: Http = this.httpQueue.length ? this.httpQueue.shift() : new Http();
 		let data: IHttpData = {
 			url: url,
 			type: HTTP_TYPE.GET,
 			cb: cb,
-			cbT: thisArg,
+			cbT: target,
 			errCb: errCb,
 			sync: sync
 		};
@@ -69,17 +69,17 @@ export default class Http {
 	 * @param url 请求地址
 	 * @param data 参数
 	 * @param cb 完成回调
-	 * @param thisArg 回调作用域
+	 * @param target 回调作用域
 	 * @param errCb 异常回调
 	 */
-	public static post(url, data, cb?: Function, thisArg?: any, errCb?: Function, sync?: boolean): void {
+	public static post(url, data, cb?: Function, target?: any, errCb?: Function, sync?: boolean): void {
 		let http: Http = this.httpQueue.length ? this.httpQueue.shift() : new Http();
 		let datas: IHttpData = {
 			url: url,
 			data: data,
 			type: HTTP_TYPE.POST,
 			cb: cb,
-			cbT: thisArg,
+			cbT: target,
 			errCb: errCb,
 			sync: sync
 		};
