@@ -25,7 +25,7 @@ export class I18nLabel extends I18nComponentBase {
                 return;
             }
         }
-        this.lbl.string = I18nManager.Instance().getLg(this.key);
+        this.lbl.string = I18nManager.Instance().getLanguage(this.key);
     }
 }
 

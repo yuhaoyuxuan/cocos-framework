@@ -15,7 +15,7 @@ export class I18nManager extends Singleton {
         this.changeLanguage(this.languageCode);
     }
     /**获取多语言code */
-    public get lgCode():string{
+    public get lgCode(): string {
         return this.languageCode;
     }
 
@@ -38,7 +38,7 @@ export class I18nManager extends Singleton {
      * @param def 未取到默认值 没有默认值返回key
      * @returns 
      */
-    public getLg(key: string, def: string = ""): string {
+    public getLanguage(key: string, def: string = ""): string {
         if (this.languageConfig[key]) {
             return this.languageConfig[key];
         }
