@@ -18,7 +18,7 @@ export class AudioManager extends SingletonComponent {
     private isOpen: boolean = false;
 
     protected init(): void {
-        this.audioSource = this.node.getComponent(AudioSource);
+        this.audioSource = this.node.addComponent(AudioSource);
         this.onOff(!(LocalStorageManager.Instance().get(this.AUDIO_ON_OFF) == "0"))
     }
 
@@ -40,8 +40,14 @@ export class AudioManager extends SingletonComponent {
         LocalStorageManager.Instance().set(this.AUDIO_ON_OFF, isOpen ? "1" : "0");
     }
 
-    /**播放音效 */
-    public play(clip: string | AudioClip, owner: any, bundleName: string = "resources"): void {
+    /**
+     * 播放音效
+     * @param clip 路径或音频片段资源
+     * @param owner 持有者，未传入用AudioManager ,ResManager销毁持有者的时候销毁资源
+     * @param bundleName 包名 默认resources
+     * @returns 
+     */
+    public play(clip: string | AudioClip, owner?: any, bundleName: string = "resources"): void {
         if (!this.isOpen) {
             return;
         }
@@ -50,15 +56,26 @@ export class AudioManager extends SingletonComponent {
             this.audioSource.playOneShot(clip, this.volumeScale);
             return;
         }
-
+        owner = owner || this;
         ResManager.Instance().load<AudioClip>(clip, AudioClip, owner, asset => {
             this.playBg(asset, owner)
         }, this, bundleName);
     }
 
-    /**播放背景音乐 */
-    public playBg(clip: string | AudioClip, owner: any, loop: boolean = true, bundleName: string = "resources"): void {
+    /**
+    * 播放背景音乐
+    * @param clip 路径或音频片段资源
+    * @param owner 持有者，未传入用AudioManager ,ResManager销毁持有者的时候销毁资源
+    * @param loop 是否循环播放
+    * @param bundleName 包名 默认resources
+    * @returns 
+    */
+    public playBg(clip: string | AudioClip, owner?: any, loop: boolean = true, bundleName: string = "resources"): void {
         if (typeof (clip) != 'string') {
+            if (this.audioSource.clip) {
+                this.audioSource.stop();
+            }
+
             this.audioSource.clip = clip;
             this.audioSource.loop = loop;
             if (this.isOpen) {
@@ -68,7 +85,7 @@ export class AudioManager extends SingletonComponent {
             }
             return;
         }
-
+        owner = owner || this;
         ResManager.Instance().load<AudioClip>(clip, AudioClip, owner, asset => {
             this.playBg(asset, owner, loop)
         }, this, bundleName);

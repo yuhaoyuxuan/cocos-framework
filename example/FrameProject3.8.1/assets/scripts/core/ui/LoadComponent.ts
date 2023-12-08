@@ -5,6 +5,7 @@ import ComponentFindUtils from '../../slf/utils/ComponentFindUtils';
 import { ResManager } from '../../slf/res/ResManager';
 import UIManager from '../../slf/ui/UIManager';
 import { UIMainId } from './config/UIConfigMain';
+import { AudioManager } from '../../slf/audio/AudioManager';
 const { ccclass, property } = _decorator;
 /**
  * 初始化加载
@@ -61,6 +62,8 @@ export class LoadComponent extends AComponent {
 
     private onTap(): void {
         this.node.destroy();
+        AudioManager.Instance().play("preload/audios/button_click");
+        AudioManager.Instance().playBg("preload/audios/bgm");
     }
 }
 
