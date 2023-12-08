@@ -57,6 +57,10 @@ export class TimerManager extends SingletonComponent {
      * @param deltaTime 上帧间隔 s 
      */
     update(deltaTime: number) {
+        if (this.timerEventList.length == 0) {
+            return;
+        }
+
         let closeList: TimerData[] = this.timerEventList.filter(timer => {
             timer.currInterval -= deltaTime;
             if (timer.currInterval <= 0) {
@@ -145,7 +149,7 @@ export class TimerManager extends SingletonComponent {
     }
 
     private isHave(target: any): boolean {
-        if (this.idToCount[target.uuid] && this.idToCount[target.uuid] > 0) {
+        if (target && this.idToCount[target.uuid] && this.idToCount[target.uuid] > 0) {
             return true;
         }
         return false;

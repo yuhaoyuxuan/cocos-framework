@@ -25,7 +25,7 @@ export default abstract class AComponent extends Component {
      * @param callback 
      * @param bundleName 
      */
-    protected load(url: string, type: Asset, callback: (asset) => void, bundleName: string = "resources"): void {
+    protected loadRes(url: string, type: Asset, callback: (asset) => void, bundleName: string = "resources"): void {
         ResManager.Instance().load(url, type, this, callback, this, bundleName);
     }
 

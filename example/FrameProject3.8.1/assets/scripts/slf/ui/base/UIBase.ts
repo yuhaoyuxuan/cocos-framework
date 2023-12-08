@@ -67,7 +67,7 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 	* @param callback 
 	* @param bundleName 
 	*/
-	protected load(url: string, type: Asset, callback: (asset) => void, bundleName: string = "resources"): void {
+	protected loadRes(url: string, type: Asset|any, callback: (asset) => void, bundleName: string = "resources"): void {
 		ResManager.Instance().load(url, type, this.uiData, callback, this, bundleName);
 	}
 

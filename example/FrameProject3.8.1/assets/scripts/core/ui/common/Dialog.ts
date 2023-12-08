@@ -1,9 +1,10 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Node, SpriteFrame } from 'cc';
 import UIBase from '../../../slf/ui/base/UIBase';
 import { AButton } from '../../../slf/ui/component/AButton';
 import ComponentFindUtils from '../../../slf/utils/ComponentFindUtils';
 import UIManager from '../../../slf/ui/UIManager';
 import { UIMainId } from '../config/UIConfigMain';
+import { ResManager } from '../../../slf/res/ResManager';
 const { ccclass, property } = _decorator;
 
 /**
