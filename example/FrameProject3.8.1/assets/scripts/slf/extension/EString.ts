@@ -1,5 +1,3 @@
-import { js } from "cc";
-
 declare global {
     interface String {
         /**
@@ -34,7 +32,7 @@ declare global {
 }
 
 /**
- * 扩展字符串
+ * 扩展字符串原型
  * @author slf
  */
 export class EString {
