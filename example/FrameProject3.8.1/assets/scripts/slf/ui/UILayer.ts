@@ -1,5 +1,5 @@
-import UIBase from "./base/UIBase";
 import { BlockInputEvents, Node, Sprite, Widget } from "cc";
+import { IUI } from "./base/IUI";
 
 /**层级类型 */
 export enum LayerType {
@@ -48,7 +48,7 @@ export default class UILayer {
      * 添加到显示列表
      * @param ui 
      */
-    public addLayer(ui: UIBase): void {
+    public addLayer(ui: IUI): void {
         switch (ui.layerType) {
             case LayerType.Scene:
                 this.sceneLayer.addChild(ui.node);
@@ -65,12 +65,12 @@ export default class UILayer {
                 break;
         }
     }
-    
+
     /**
      * 从显示列表移除
      * @param ui 
      */
-    public removeLayer(ui: UIBase): void {
+    public removeLayer(ui: IUI): void {
         if (ui) {
             if (ui.node && ui.node.parent) {
                 ui.node.parent.removeChild(ui.node);
@@ -101,7 +101,7 @@ export default class UILayer {
         let childList = this.panelLayer.children;
         let isDark = false
         for (let child of childList) {
-            let ui: UIBase = child.getComponent(UIBase);
+            let ui: IUI = child.getComponent("UIBase") as any;
             if (ui?.isDarkRect) {
                 isDark = true
                 break

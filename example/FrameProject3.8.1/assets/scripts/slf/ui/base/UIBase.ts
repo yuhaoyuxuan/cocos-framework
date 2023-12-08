@@ -30,13 +30,6 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 
 	public uiData: UIData;
 	protected preloadCb: Function;
-	/// <summary>
-	/// 移除显示列表后
-	/// </summary>
-	public removeLayer(): void {
-		this.preloadCb = null;
-		this.removeView();
-	}
 
 	public preload(cb: Function): void {
 		this.preloadCb = cb;
@@ -67,7 +60,7 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 	* @param callback 
 	* @param bundleName 
 	*/
-	protected loadRes(url: string, type: Asset|any, callback: (asset) => void, bundleName: string = "resources"): void {
+	protected loadRes(url: string, type: Asset | any, callback: (asset) => void, bundleName: string = "resources"): void {
 		ResManager.Instance().load(url, type, this.uiData, callback, this, bundleName);
 	}
 

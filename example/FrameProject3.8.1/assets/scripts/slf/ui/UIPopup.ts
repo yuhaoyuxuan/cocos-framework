@@ -1,5 +1,5 @@
 import { UITransform, Vec2, Vec3, tween } from "cc";
-import UIBase from "./base/UIBase";
+import { IUI } from "./base/IUI";
 
 /**弹出类型 */
 export enum PopupType {
@@ -29,7 +29,7 @@ export default class UIPopup {
 	 * @param uiBase 
 	 * @returns 
 	 */
-	public popup(uiBase: UIBase): void {
+	public popup(uiBase: IUI): void {
 		let type = uiBase.popupType;
 		if (type == PopupType.None) {
 			return;

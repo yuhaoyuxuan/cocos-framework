@@ -1,4 +1,3 @@
-import UIBase from "./base/UIBase";
 import UIPopup from "./UIPopup";
 import UILayer from "./UILayer";
 import UIData from "./base/UIData";
@@ -6,6 +5,8 @@ import UIController from "./UIController";
 import { ResManager } from "../res/ResManager";
 import { Singleton } from "../common/Singleton";
 import { Node, Prefab, Widget, instantiate } from "cc";
+import { IUI } from "./base/IUI";
+import { IPreload } from "./base/IPreload";
 
 /**
  * ui界面管理类
@@ -20,7 +21,7 @@ export default class UIManager extends Singleton {
 	/**层级管理 */
 	private layer: UILayer;
 	/**已缓存的界面 */
-	private cacheUIMap: Map<number, UIBase>;
+	private cacheUIMap: Map<number, IUI>;
 	/**带打开界面队列 */
 	private openList: UIData[];
 	/**当前打开界面 */
@@ -89,16 +90,18 @@ export default class UIManager extends Singleton {
 		widget.top = widget.bottom = widget.left = widget.right = 0;
 
 		//获取脚本
-		let uiBase: UIBase = node.getComponent(UIBase);
+		let uiBase: IUI = node.getComponent("UIBase") as any;
 		this.cacheUIMap[this.currOpen.id] = uiBase;
 		uiBase.uiData = this.currOpen;
 		this.show(uiBase);
 	}
 
 	/**添加到显示列表 */
-	private show(uiBase: UIBase): void {
+	private show(uiBase: IUI): void {
+		/**循环引用 */
+		let preload: IPreload = uiBase as any;
 		//ui界面预加载操作
-		uiBase.preload(() => {
+		preload.preload(() => {
 			if (uiBase.uiData.closeFailed) {
 				uiBase.uiData.closeFailed = false;
 				return;
@@ -120,8 +123,8 @@ export default class UIManager extends Singleton {
 	 * 关闭ui界面
 	 * @param uiId id 或 ui脚本
 	 */
-	public closeUI(uiId: number | UIBase): void {
-		let uiBase: UIBase;
+	public closeUI(uiId: number | IUI): void {
+		let uiBase: IUI;
 		if (typeof (uiId) != "number") {
 			uiBase = uiId;
 		} else {
@@ -132,7 +135,7 @@ export default class UIManager extends Singleton {
 			//移除显示列表
 			if (uiBase.node.parent) {
 				this.layer.removeLayer(uiBase);
-				uiBase.removeLayer();
+				uiBase.removeView();
 			}
 			//销毁
 			if (uiBase.isDestroy) {
