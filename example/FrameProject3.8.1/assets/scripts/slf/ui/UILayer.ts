@@ -131,11 +131,13 @@ export default class UILayer {
     /**绘制黑底 */
     private setGraphicsSize(gh: Graphics): void {
         gh.clear();
-        let size = gh.node.getComponent(UITransform).contentSize;
-        let defSize = view.getDesignResolutionSize();
+        let size = gh.node.getComponent(UITransform).contentSize.clone();
+        let defSize = view.getDesignResolutionSize().clone();
         if (size.x < defSize.x || size.y < defSize.y) {
             size = defSize;
         }
+        size.x *= 1.5;
+        size.y *= 1.5;
         gh.fillRect(-size.x / 2, -size.y / 2, size.width, size.height);
         gh.fill();
     }
