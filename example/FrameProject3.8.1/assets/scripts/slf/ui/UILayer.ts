@@ -1,13 +1,18 @@
-import { BlockInputEvents, Node, Sprite, Widget } from "cc";
+import { BlockInputEvents, Color, Graphics, Node, UITransform, Widget, view } from "cc";
 import { IUI } from "./base/IUI";
+import { IUIManager } from "./base/IUIManager";
 
 /**层级类型 */
 export enum LayerType {
     /** 场景层*/
     Scene,
+    /** 唯一层 互斥，同时只会存在一个*/
+    Sole,
     /** 面板层 */
     Panel,
-    /** 加载层 */
+    /** 对话框层 */
+    Dialog,
+    /** 加载、通信层 */
     Loading
 }
 
@@ -16,77 +21,123 @@ export enum LayerType {
   * @author slf
   */
 export default class UILayer {
-    /**场景层*/
-    private sceneLayer: Node = new Node("scene");
-    /**面板层*/
-    private panelLayer: Node = new Node("panel");
-    /**loading层 */
-    private loadingLayer: Node = new Node("loading");
-
-    //面板层黑底
-    private blackMaskPanel: Node;
+    private manager: IUIManager;
+    /**层合集 */
+    private layerMap: Map<LayerType | string, Node>;
+    /**层遮挡合集 */
+    private layerMaskMap: Map<LayerType | string, Node>;
     constructor() {
-        this.addWidget(this.sceneLayer);
-        this.addWidget(this.panelLayer);
-        this.addWidget(this.loadingLayer);
+        this.layerMap = new Map();
+        this.layerMaskMap = new Map();
 
-        this.blackMaskPanel = this.addBlack("blackPanel");
-        this.panelLayer.addChild(this.blackMaskPanel);
+        let value;
+        /**添加层节点 */
+        for (let key in LayerType) {
+            value = LayerType[key];
+            this.layerMap.set(value, this.addNode(key));
+
+            if (value == LayerType.Scene.toString() || value == LayerType.Loading.toString()) {
+                continue;
+            }
+
+            //添加层遮罩节点
+            this.layerMaskMap.set(LayerType[key], this.addBlack(key, this.layerMap.get(LayerType[key])));
+        }
     }
 
     /**
      * 初始化ui根容器
      * @param rootView 
      */
-    public initRoot(rootView: Node): void {
-        rootView.addChild(this.sceneLayer);
-        rootView.addChild(this.panelLayer);
-        rootView.addChild(this.loadingLayer);
+    public initRoot(rootView: Node, manager: IUIManager): void {
+        this.layerMap.forEach(node => {
+            node.parent = rootView;
+        })
+        this.manager = manager;
     }
 
     /**
      * 添加到显示列表
-     * @param ui 
+     * @param uiBase 
      */
-    public addLayer(ui: IUI): void {
-        switch (ui.layerType) {
-            case LayerType.Scene:
-                this.sceneLayer.addChild(ui.node);
-                break;
-            case LayerType.Panel:
-                this.panelLayer.addChild(ui.node);
-                ui.isDarkRect && this.flushDarkLayer(ui.layerType);
-                break;
-            case LayerType.Loading:
-                this.loadingLayer.addChild(ui.node);
-                break;
-            default:
-                console.error("none layer " + ui.layerType);
-                break;
+    public addLayer(uiBase: IUI): void {
+        if (!this.layerMap.has(uiBase.layerType)) {
+            console.error("addLayer none layer " + uiBase.layerType);
+            return;
         }
+        if (uiBase.layerType == LayerType.Sole) {
+            this.removeLayerAll(uiBase.layerType);
+        }
+        this.layerMap.get(uiBase.layerType).addChild(uiBase.node);
+        uiBase.isBlackMask && this.flushBlackMask(uiBase.layerType);
     }
 
     /**
      * 从显示列表移除
-     * @param ui 
+     * @param uiBase 
      */
-    public removeLayer(ui: IUI): void {
-        if (ui) {
-            if (ui.node && ui.node.parent) {
-                ui.node.parent.removeChild(ui.node);
+    public removeLayer(uiBase: IUI): void {
+        if (uiBase) {
+            if (uiBase.node && uiBase.node.parent) {
+                uiBase.node.parent.removeChild(uiBase.node);
             }
-            ui.isDarkRect && this.flushDarkLayer(ui.layerType);
+            uiBase.isBlackMask && this.flushBlackMask(uiBase.layerType);
         }
     }
 
+    /**
+     * 删除此层的所有节点
+     * @param layer 
+     */
+    public removeLayerAll(layer: LayerType | LayerType[]): void {
+        if (Array.isArray(layer)) {
+            layer.forEach(v => {
+                this.removeLayerAll(v);
+            })
+            return;
+        }
+        let childList = this.layerMap.get(layer).children;
+        let uiBase: IUI
+        for (let i = childList.length - 1; i >= 0; i--) {
+            uiBase = childList[i].getComponent("UIBase") as any;
+            if (uiBase) {
+                this.manager.closeUI(uiBase);
+            }
+        }
+    }
+
+    /**添加层节点 */
+    private addNode(name: string): Node {
+        let layer: Node = new Node(name);
+        layer.addComponent(UITransform);
+        this.addWidget(layer, 0);
+        return layer;
+    }
+
+
     /**添加层遮挡黑底 */
-    private addBlack(name: string = "black"): Node {
-        let black: Node = new Node(name);
-        black.addComponent(Sprite);
+    private addBlack(name: string, parent: Node): Node {
+        let black: Node = new Node(name + "_black");
+        let gh = black.addComponent(Graphics);
+        gh.fillColor = new Color(0, 0, 0, 120);
         black.addComponent(BlockInputEvents);
         this.addWidget(black, -20);
         black.active = false;
+        this.setGraphicsSize(gh);
+        black.parent = parent;
         return black;
+    }
+
+    /**绘制黑底 */
+    private setGraphicsSize(gh: Graphics): void {
+        gh.clear();
+        let size = gh.node.getComponent(UITransform).contentSize;
+        let defSize = view.getDesignResolutionSize();
+        if (size.x < defSize.x || size.y < defSize.y) {
+            size = defSize;
+        }
+        gh.fillRect(-size.x / 2, -size.y / 2, size.width, size.height);
+        gh.fill();
     }
 
     /**添加相对 布局节点 */
@@ -97,21 +148,29 @@ export default class UILayer {
     }
 
     /**刷新黑底 */
-    private flushDarkLayer(type: LayerType) {
-        let childList = this.panelLayer.children;
-        let isDark = false
-        for (let child of childList) {
-            let ui: IUI = child.getComponent("UIBase") as any;
-            if (ui?.isDarkRect) {
-                isDark = true
-                break
+    private flushBlackMask(type: LayerType) {
+        if (!this.layerMaskMap.has(type)) {
+            return;
+        }
+        let childList: Node[] = this.layerMap.get(type).children;
+        let black: Node = this.layerMaskMap.get(type);
+
+        let isDark = false;
+        let uiBase: IUI;
+        for (let i = childList.length - 1; i >= 0; i--) {
+            uiBase = childList[i].getComponent("UIBase") as any;
+            if (uiBase?.isBlackMask) {
+                isDark = true;
+                break;
             }
         }
+
         if (childList.length > 1 && isDark) {
-            this.panelLayer.insertChild(this.blackMaskPanel, childList.length - 2)
-            this.blackMaskPanel.active = true;
+            let index = uiBase.node.getSiblingIndex();
+            black.parent.insertChild(black, black.getSiblingIndex() > index ? index : index - 1);
+            black.active = true;
         } else {
-            this.blackMaskPanel.active = false;
+            black.active = false;
         }
     }
 }

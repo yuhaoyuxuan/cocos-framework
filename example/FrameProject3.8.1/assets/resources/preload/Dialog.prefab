@@ -1332,9 +1332,9 @@
     "__prefab": {
       "__id__": 57
     },
-    "layerType": 1,
+    "layerType": 3,
     "popupType": 1,
-    "isDarkRect": true,
+    "isBlackMask": true,
     "isDestroy": false,
     "_id": ""
   },

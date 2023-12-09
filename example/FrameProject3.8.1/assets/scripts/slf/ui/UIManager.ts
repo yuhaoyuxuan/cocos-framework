@@ -7,13 +7,14 @@ import { Singleton } from "../common/Singleton";
 import { Node, Prefab, Widget, instantiate } from "cc";
 import { IUI } from "./base/IUI";
 import { IPreload } from "./base/IPreload";
+import { IUIManager } from "./base/IUIManager";
 
 /**
  * ui界面管理类
  * 
  * @author slf
  * */
-export default class UIManager extends Singleton {
+export default class UIManager extends Singleton implements IUIManager {
 	/**ui控制器 */
 	public controller: UIController;
 	/**弹出管理 */
@@ -41,13 +42,12 @@ export default class UIManager extends Singleton {
 	 * @param uiRoot ui根容器
 	 */
 	public initRoot(uiRoot: Node): void {
-		this.layer.initRoot(uiRoot);
+		this.layer.initRoot(uiRoot, this);
 	}
-
 
 	/**
 	 * 打开ui界面
-	 * @param uiId 界面位移id
+	 * @param uiId 界面id
 	 * @param data 透传数据
 	 * @returns 
 	 */

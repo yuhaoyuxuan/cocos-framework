@@ -13,7 +13,7 @@ export interface IUI {
     /**弹出效果 */
     popupType: PopupType;
     /**是否显示半透黑底 */
-    isDarkRect: boolean;
+    isBlackMask: boolean;
     /**关闭面板是否销毁*/
     isDestroy: boolean;
     /**节点 */
