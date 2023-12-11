@@ -64,7 +64,7 @@ export default class UIManager extends Singleton implements IUIManager {
 			return;
 		}
 
-
+		//加入待打开队列
 		let index = this.openList.indexOf(uiData);
 		if (index != -1) {//ui已在带打开队列
 			this.openList[index].data = data;
@@ -99,7 +99,7 @@ export default class UIManager extends Singleton implements IUIManager {
 
 		//获取脚本
 		let uiBase: IUI = node.getComponent("UIBase") as any;
-		this.cacheUIMap[this.currOpen.id] = uiBase;
+		this.cacheUIMap.set(this.currOpen.id, uiBase);
 		uiBase.uiData = this.currOpen;
 		this.show(uiBase);
 	}
@@ -136,7 +136,7 @@ export default class UIManager extends Singleton implements IUIManager {
 		if (typeof (uiId) != "number") {
 			uiBase = uiId;
 		} else {
-			uiBase = this.cacheUIMap[uiId];
+			uiBase = this.cacheUIMap.get(uiId);
 		}
 
 		if (uiBase) {
@@ -147,7 +147,7 @@ export default class UIManager extends Singleton implements IUIManager {
 			}
 			//销毁
 			if (uiBase.isDestroy) {
-				delete this.cacheUIMap[uiBase.uiData.id];
+				this.cacheUIMap.delete(uiBase.uiData.id);
 				uiBase.node && uiBase.node.destroy();
 			}
 		} else {
