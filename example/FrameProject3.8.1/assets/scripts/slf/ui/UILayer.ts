@@ -33,6 +33,10 @@ export default class UILayer {
         let value;
         /**添加层节点 */
         for (let key in LayerType) {
+            if(!isNaN(key as any)){
+                continue;
+            }
+
             value = LayerType[key];
             this.layerMap.set(value, this.addNode(key));
 
@@ -41,7 +45,7 @@ export default class UILayer {
             }
 
             //添加层遮罩节点
-            this.layerMaskMap.set(LayerType[key], this.addBlack(key, this.layerMap.get(LayerType[key])));
+            this.layerMaskMap.set(value, this.addBlack(key, this.layerMap.get(value)));
         }
     }
 
