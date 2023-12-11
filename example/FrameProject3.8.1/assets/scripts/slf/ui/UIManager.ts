@@ -57,6 +57,14 @@ export default class UIManager extends Singleton implements IUIManager {
 			return;
 		}
 		uiData.data = data;
+
+		//检测是否缓存
+		if (this.cacheUIMap.has(uiId)) {
+			this.show(this.cacheUIMap.get(uiId));
+			return;
+		}
+
+
 		let index = this.openList.indexOf(uiData);
 		if (index != -1) {//ui已在带打开队列
 			this.openList[index].data = data;
