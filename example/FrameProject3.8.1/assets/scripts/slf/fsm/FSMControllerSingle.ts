@@ -31,13 +31,13 @@ export class FSMControllerSingle extends FSMController {
      * @param actionName 方法名
      * @param param 参数
      */
-    public getFunction(action: any, actionName: string, stateName: any,): any {
-        let funName:string = actionName + "_" + stateName?.toString();
+    public getFunction(action: any, actionName: string, stateName: any): any {
+        let funName: string = actionName + "_" + stateName?.toString();
         let fun: Function = action[funName];
         if (!fun) {
             console.warn("register none function name=" + funName)
         }
-        return fun;
+        return fun.bind(action);
     }
 
 }
