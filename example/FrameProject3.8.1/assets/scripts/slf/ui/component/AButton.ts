@@ -30,7 +30,7 @@ export class AButton extends Button {
             return;
         }
         super._onTouchEnded(event);
-        this.callback?.apply(this.thisArg, this.param);
+        this.callback?.call(this.thisArg, this.param);
     }
 
     onDestroy(): void {

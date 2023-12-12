@@ -13,7 +13,7 @@ export interface IState {
     /**退出状态 */
     exit(): void
     /**销毁此状态 */
-    onDestroy(): void
+    onDestroyState?(): void
 }
 
 

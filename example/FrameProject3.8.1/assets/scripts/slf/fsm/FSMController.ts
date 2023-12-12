@@ -1,20 +1,25 @@
+import { TimerManager } from "../timer/TimerManager";
 import { IState } from "./IState";
+import { IFiniteStateMachine } from "./IFiniteStateMachine";
 
 /**
  * 有限状态机控制器
  * Finite State Machine(FSM)
  * @author slf
  */
-export class FSMController {
+export class FSMController implements IFiniteStateMachine {
     /**
      * 状态集合
      */
-    private stateMap: Map<number | string, IState> = new Map();
+    protected stateMap: Map<number | string, IState> = new Map();
     /**
      * 当前状态
      */
-    private currentState: IState;
+    currentState: IState;
 
+    constructor() {
+        TimerManager.Instance().on(0, this.update, this);
+    }
     /**
      * 注册状态
      * @param sName 状态名 
@@ -44,17 +49,17 @@ export class FSMController {
 
     /**
      * 持续更新状态机执行中状态
-     * @param dt 上帧间隔 s
      */
-    public update(dt: number): void {
+    public update(dt: any): void {
         this.currentState?.update(dt);
     }
 
     /**销毁状态机 */
     public onDestroy(): void {
+        TimerManager.Instance().off(this.update, this);
         this.currentState = null;
         this.stateMap.forEach(v => {
-            v.onDestroy();
+            v.onDestroyState && v.onDestroyState();
         })
         this.stateMap.clear();
     }
