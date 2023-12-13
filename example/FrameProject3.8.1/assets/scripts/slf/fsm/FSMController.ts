@@ -7,15 +7,13 @@ import { IFiniteStateMachine } from "./IFiniteStateMachine";
  * Finite State Machine(FSM)
  * @author slf
  */
-export class FSMController implements IFiniteStateMachine {
+export class FSMController<T> implements IFiniteStateMachine {
     /**
      * 状态集合
      */
-    protected stateMap: Map<number | string, IState> = new Map();
-    /**
-     * 当前状态
-     */
+    protected stateMap: Map<number | string | any, IState> = new Map();
     currentState: IState;
+    currentStateName: T;
 
     constructor() {
         TimerManager.Instance().on(0, this.update, this);
@@ -25,7 +23,7 @@ export class FSMController implements IFiniteStateMachine {
      * @param sName 状态名 
      * @param state 状态类
      */
-    public register(sName: string | number, state: IState): void {
+    public register(sName: T | number, state: IState): void {
         if (this.stateMap.has(sName)) {
             console.error("register duplicate state " + sName);
             return;
@@ -37,12 +35,13 @@ export class FSMController implements IFiniteStateMachine {
      * 改变状态
      * @param sName 状态名
      */
-    public changeState(sName: string): void {
+    public changeState(sName: T): void {
         this.currentState?.exit();
         if (!this.stateMap.has(sName)) {
             console.error("change none state " + sName);
             return;
         }
+        this.currentStateName = sName;
         this.currentState = this.stateMap.get(sName);
         this.currentState.entry();
     }

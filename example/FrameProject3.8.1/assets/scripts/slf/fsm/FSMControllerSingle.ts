@@ -10,16 +10,22 @@ const { ccclass, property } = _decorator;
  */
 
 @ccclass('FSMControllerSingle')
-export class FSMControllerSingle extends FSMController {
-    public register(name: string, stateComponent: any): void {
+export class FSMControllerSingle<T> extends FSMController<T> {
+    private action: any;
+    constructor(action: any) {
+        super();
+        this.action = action;
+    }
+
+    public register(name: T | any): void {
         let state = {
-            entry: this.getFunction(stateComponent, "entry", name),
-            update: this.getFunction(stateComponent, "update", name),
-            exit: this.getFunction(stateComponent, "exit", name)
+            entry: this.getFunction("entry", name),
+            update: this.getFunction("update", name),
+            exit: this.getFunction("exit", name)
         };
 
         if (this.stateMap.has(name)) {
-            console.error("register duplicate state " + name);
+            console.error("FSM register duplicate state " + name);
             return;
         }
         this.stateMap.set(name, state);
@@ -31,13 +37,14 @@ export class FSMControllerSingle extends FSMController {
      * @param actionName 方法名
      * @param param 参数
      */
-    public getFunction(action: any, actionName: string, stateName: any): any {
+    public getFunction(actionName: string, stateName: any): any {
         let funName: string = actionName + "_" + stateName?.toString();
-        let fun: Function = action[funName];
+        let fun: Function = this.action[funName];
         if (!fun) {
-            console.warn("register none function name=" + funName)
+            console.log("FSM register none function name=" + funName);
+            return () => { };
         }
-        return fun.bind(action);
+        return fun.bind(this.action);
     }
 
 }

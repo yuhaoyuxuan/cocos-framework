@@ -10,13 +10,17 @@ export interface IFiniteStateMachine {
      * 当前状态
      */
     currentState: any;
+    /**
+     * 当前状态名字
+     */
+    currentStateName: any;
 
     /**
      * 注册状态
      * @param sName 状态名 
      * @param state 状态类
      */
-    register(name: string, state: IState | any): void
+    register(name: any, state: IState | any): void
 
     /**
      * 切换状态

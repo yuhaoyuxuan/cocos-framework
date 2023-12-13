@@ -67,29 +67,33 @@ let copyProperty = (function () {
 		jsList.forEach((js, idx) => {
 			proName = js._name;
 			if (proName) {
-				if (proName.indexOf("node") != -1) {
+				if (proName.startsWith("node")) {
 					parseNode(proName, js)
-				} else if (proName.indexOf("lbl") != -1) {
+				} else if (proName.startsWith("lbl")) {
 					parseBuiltinComponent(proName, 'cc.Label', js)
-				} else if (proName.indexOf("btn") != -1) {
+				} else if (proName.startsWith("slider")) {
+					if (!parseCustomComponent(proName, js, 'ASlider')) {
+						parseBuiltinComponent(proName, 'cc.Slider', js)
+					}
+				} else if (proName.startsWith("btn")) {
 					if (!parseCustomComponent(proName, js, 'AButton')) {
 						parseBuiltinComponent(proName, 'cc.Button', js)
 					}
-				} else if (proName.indexOf("rich") != -1) {
+				} else if (proName.startsWith("rich")) {
 					parseBuiltinComponent(proName, 'cc.RichText', js)
-				} else if (proName.indexOf("img") != -1) {
+				} else if (proName.startsWith("img")) {
 					parseBuiltinComponent(proName, 'cc.Sprite', js)
-				} else if (proName.indexOf("tog") != -1) {
+				} else if (proName.startsWith("tog")) {
 					if (!parseCustomComponent(proName, js, 'AToggle')) {
 						parseBuiltinComponent(proName, 'cc.Toggle', js)
 					}
-				} else if (proName.indexOf("eb") != -1) {
+				} else if (proName.startsWith("eb")) {
 					parseBuiltinComponent(proName, 'cc.EditBox', js)
-				} else if (proName.indexOf("list") != -1) {
+				} else if (proName.startsWith("list")) {
 					if (!parseCustomComponent(proName, js, 'AVirtualScrollView')) {
 						parseCustomComponent(proName, js, 'List')
 					}
-				} else if (proName.indexOf("item") != -1) {
+				} else if (proName.startsWith("item")) {
 					parseCustomComponent(proName, js)
 				}
 			} else if (js.value) {//3.0嵌套预制体
@@ -101,10 +105,8 @@ let copyProperty = (function () {
 	//3.0嵌套预制体
 	function parsePrefab(value, js, idx) {
 		if (typeof (value) == "string") {
-			if (value.indexOf("item") != -1) {
+			if (value.startsWith("item")) {
 				parsePrefabCustomComponent(value, js, '', idx)
-			} else if (value.indexOf("extend") != -1) {	//自定义模板 根据命名规则来获取固定的 组件类名
-				parsePrefabCustomComponent(value, js, 'TestExtend', idx)
 			}
 		}
 
