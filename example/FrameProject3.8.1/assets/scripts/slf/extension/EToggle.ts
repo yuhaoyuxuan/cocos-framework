@@ -19,10 +19,10 @@ declare module "cc" {
 }
 
 Toggle.prototype.onToggleCheckCallback = function (callback: (...args) => void, thisArg?: any, ...arg) {
-    if (!this.__callbackData) {
-        this.__callbackData = {};
+    if (!this.__callbackData_toggle) {
+        this.__callbackData_toggle = {};
     }
-    let cd: ICallback = this.__callbackData;
+    let cd: ICallback = this.__callbackData_toggle;
     cd.callback = callback;
     cd.thisArg = this.thisArg;
     cd.arg = arg || [];
@@ -32,7 +32,7 @@ Toggle.prototype.onToggleCheckCallback = function (callback: (...args) => void, 
 Toggle.prototype['_setClone'] = Toggle.prototype['_set'];
 Toggle.prototype['_set'] = function (value: boolean, emitEvent = true) {
     this["_setClone"](value, emitEvent);
-    let cd: ICallback = this.__callbackData;
+    let cd: ICallback = this.__callbackData_toggle;
     if (emitEvent && !!cd) {
         cd.callback.apply(cd.thisArg, [value].concat(cd.arg));
     }
