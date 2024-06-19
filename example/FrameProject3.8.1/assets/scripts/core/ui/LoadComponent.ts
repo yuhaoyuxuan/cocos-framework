@@ -1,11 +1,11 @@
 import { _decorator, AssetManager, assetManager, resources, Sprite, tween, Vec2 } from 'cc';
 import AComponent from '../../slf/ui/component/AComponent';
-import { AButton } from '../../slf/ui/component/AButton';
 import ComponentFindUtils from '../../slf/utils/ComponentFindUtils';
 import { ResManager } from '../../slf/res/ResManager';
 import UIManager from '../../slf/ui/UIManager';
 import { UIMainId } from './config/UIConfigMain';
 import { AudioManager } from '../../slf/audio/AudioManager';
+import { Button } from 'cc';
 const { ccclass, property } = _decorator;
 /**
  * 初始化加载
@@ -13,12 +13,12 @@ const { ccclass, property } = _decorator;
 @ccclass('Loading')
 export class LoadComponent extends AComponent {
     private get imgProgress(): Sprite { return ComponentFindUtils.find<Sprite>("imgProgress", Sprite, this); }
-    private get btnConfirm(): AButton { return ComponentFindUtils.find<AButton>("btnConfirm", AButton, this); }
+    private get btnConfirm(): Button { return ComponentFindUtils.find<Button>("btnConfirm", Button, this); }
 
     private callback: Function;
     private target: any;
     protected initEvent(): void {
-        this.btnConfirm.setClickCallback(this.onTap, this);
+        this.btnConfirm.onClickCallback(this.onTap, this);
         this.btnConfirm.node.active = false;
     }
 

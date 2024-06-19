@@ -329,7 +329,7 @@
     "fileId": "20xFBVJnZM3oCSN3toMTSY"
   },
   {
-    "__type__": "b662a6NYstOvbtSK2f6cH/t",
+    "__type__": "cc.Button",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -342,7 +342,7 @@
     },
     "clickEvents": [],
     "_interactable": true,
-    "_transition": 3,
+    "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -382,7 +382,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "9bCN6+1ihLX7dye46HNVyF"
+    "fileId": "a9UNCXmsZK55pkH9Pgp8Ev"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -439,7 +439,7 @@
     },
     "layerType": 0,
     "popupType": 0,
-    "isDarkRect": true,
+    "isBlackMask": true,
     "isDestroy": false,
     "_id": ""
   },

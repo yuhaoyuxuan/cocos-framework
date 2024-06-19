@@ -1,10 +1,10 @@
 import { _decorator, Component, Node, SpriteFrame } from 'cc';
 import UIBase from '../../../slf/ui/base/UIBase';
-import { AButton } from '../../../slf/ui/component/AButton';
 import ComponentFindUtils from '../../../slf/utils/ComponentFindUtils';
 import UIManager from '../../../slf/ui/UIManager';
 import { UIMainId } from '../config/UIConfigMain';
 import { ResManager } from '../../../slf/res/ResManager';
+import { Button } from 'cc';
 const { ccclass, property } = _decorator;
 
 /**
@@ -12,14 +12,13 @@ const { ccclass, property } = _decorator;
  */
 @ccclass('Dialog')
 export class Dialog extends UIBase {
-    private get btnClose(): AButton { return ComponentFindUtils.find<AButton>("btnClose", AButton, this); }
-    private get btnLoading(): AButton { return ComponentFindUtils.find<AButton>("btnLoading", AButton, this); }
+    private get btnClose(): Button { return ComponentFindUtils.find<Button>("btnClose", Button, this); }
+    private get btnLoading(): Button { return ComponentFindUtils.find<Button>("btnLoading", Button, this); }
 
 
     public initEvent(): void {
-        this.btnClose.setClickCallback(this.onClose, this);
-
-        this.btnLoading.setClickCallback(this.onLoading, this);
+        this.btnClose.onClickCallback(this.onClose, this);
+        this.btnLoading.onClickCallback(this.onLoading, this);
     }
 
     private onLoading(): void {

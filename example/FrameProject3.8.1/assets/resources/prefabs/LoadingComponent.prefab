@@ -610,7 +610,7 @@
     "fileId": "933GLyBxxIMKUeC468bU2d"
   },
   {
-    "__type__": "b662a6NYstOvbtSK2f6cH/t",
+    "__type__": "cc.Button",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -623,7 +623,7 @@
     },
     "clickEvents": [],
     "_interactable": true,
-    "_transition": 3,
+    "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -657,13 +657,13 @@
     "_pressedSprite": null,
     "_disabledSprite": null,
     "_duration": 0.1,
-    "_zoomScale": 0.9,
+    "_zoomScale": 1.2,
     "_target": null,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "4919EKgBlJ2r9e4YQtClck"
+    "fileId": "c3W2uNY9lDV59PJjI9eAVx"
   },
   {
     "__type__": "cc.PrefabInfo",
