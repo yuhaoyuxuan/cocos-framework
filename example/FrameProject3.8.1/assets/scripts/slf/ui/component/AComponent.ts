@@ -30,7 +30,7 @@ export default abstract class AComponent extends Component {
     }
 
     /**todo 子类重写后记得 suepr */
-    protected onDestroy(): void {
+    public preDestroy(): void {
         this.destroyView();
         ResManager.Instance().destroy(this);
         EventManager.Instance().targetOff(this);

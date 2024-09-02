@@ -65,8 +65,8 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 	}
 
 	/**todo 子类重写后记得 suepr */
-	protected onDestroy(): void {
-		super.onDestroy();
+	public preDestroy(): void {
+		super.preDestroy();
 		ResManager.Instance().destroy(this.uiData);
 		this.uiData = null;
 	}
