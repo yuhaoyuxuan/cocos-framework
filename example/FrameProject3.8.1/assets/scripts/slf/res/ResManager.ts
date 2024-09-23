@@ -29,7 +29,7 @@ export class ResManager extends Singleton {
      * @param name 包名 
      * @param callback 完成回调
      */
-    public loadBundle(name: string, callback: Function, target: any): void {
+    public loadBundle(name: string, callback: (bundle: AssetManager.Bundle) => void, target?: any): void {
         if (this.bundleResMap.has(name)) {
             callback.call(target, this.bundleResMap.get(name).bundle);
             return;
@@ -131,6 +131,12 @@ export class ResManager extends Singleton {
         if (reg.test(task.url)) {
             assetManager.loadRemote(task.url, this.parseAsset.bind(this, task));
         } else {
+            if (!bRes) {
+                this.loadBundle(task.bundleName, bundle => {
+                    bundle?.load(task.url, this.parseAsset.bind(this, task));
+                });
+                return;
+            }
             bRes.bundle.load(task.url, this.parseAsset.bind(this, task));
         }
     }
