@@ -15,6 +15,8 @@ export default class UIData {
     public data: any;
     /**防止加载中 关闭失败  加载成功后检测  为true关闭页面*/
     public closeFailed: boolean;
+    /**父容器节点，默认未空，添加到layer层，如果有只会使用此节点为父节点 */
+    public parentNode: any;
 
     /**
      * 初始化数据

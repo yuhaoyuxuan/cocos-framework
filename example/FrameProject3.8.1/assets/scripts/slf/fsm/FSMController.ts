@@ -20,29 +20,35 @@ export class FSMController<T> implements IFiniteStateMachine {
     }
     /**
      * 注册状态
-     * @param sName 状态名 
+     * @param name 状态名 
      * @param state 状态类
      */
-    public register(sName: T | number, state: IState): void {
-        if (this.stateMap.has(sName)) {
-            console.error("register duplicate state " + sName);
+    public register(name: T | number, state: IState): void {
+        if (this.stateMap.has(name)) {
+            console.error("register duplicate state " + name);
             return;
         }
-        this.stateMap.set(sName, state);
+        this.stateMap.set(name, state);
     }
 
     /**
      * 改变状态
-     * @param sName 状态名
+     * @param name 状态名
      */
-    public changeState(sName: T): void {
-        this.currentState?.exit();
-        if (!this.stateMap.has(sName)) {
-            console.error("change none state " + sName);
+    public changeState(name: T): void {
+        if (this.currentStateName == name) {
+            console.error("changeState same name " + name)
             return;
         }
-        this.currentStateName = sName;
-        this.currentState = this.stateMap.get(sName);
+
+
+        this.currentState?.exit();
+        if (!this.stateMap.has(name)) {
+            console.error("change none state " + name);
+            return;
+        }
+        this.currentStateName = name;
+        this.currentState = this.stateMap.get(name);
         this.currentState.entry();
     }
 

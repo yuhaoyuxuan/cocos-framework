@@ -6,10 +6,6 @@ import UIData from "./base/UIData";
  * */
 export default class UIController {
     private uiDataMap: Map<number, UIData> = new Map();
-    // this.register(new UIData(1, "test/prefabs/testUI"))
-    // this.register(new UIData(2, "test/prefabs/testUI1", "resources"))
-    // this.register(new UIData(2, "test/prefabs/testUI1", "resources", false));
-
     /**
      * 注册ui数据
      * @param data ui数据

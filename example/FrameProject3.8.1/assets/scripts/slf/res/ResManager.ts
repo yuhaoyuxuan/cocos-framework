@@ -23,7 +23,6 @@ export class ResManager extends Singleton {
     /**最大加载 */
     private MaxValue = 10;
 
-
     /**
      * 加载包数据
      * @param name 包名 
@@ -95,6 +94,21 @@ export class ResManager extends Singleton {
     }
 
     /**
+     * 预加载资源
+     * @param url 资源路径
+     * @param type 资源类型
+     * @param bundleName 包名 默认resources
+     */
+    public preLoad(url: string | string[], bundleName: string = "resources"): void {
+        let bundle = assetManager.getBundle(bundleName);
+        if (!bundle) {
+            console.error("none bundle data name=" + bundleName);
+            return;
+        }
+        bundle.preload(url)
+    }
+
+    /**
      * 加载资源
      * @param url 资源路径
      * @param type 资源类型
@@ -133,11 +147,11 @@ export class ResManager extends Singleton {
         } else {
             if (!bRes) {
                 this.loadBundle(task.bundleName, bundle => {
-                    bundle?.load(task.url, this.parseAsset.bind(this, task));
+                    bundle?.load(task.url, task.type, this.parseAsset.bind(this, task));
                 });
                 return;
             }
-            bRes.bundle.load(task.url, this.parseAsset.bind(this, task));
+            bRes.bundle.load(task.url, task.type, this.parseAsset.bind(this, task));
         }
     }
 
@@ -150,6 +164,7 @@ export class ResManager extends Singleton {
      */
     private parseAsset(task: ResTask, error: Error, asset: Asset): void {
         if (error || task.isCancel) {
+            error && console.error("parseAsset error = ", error);
             this.recycleResTask(task);
             return;
         }

@@ -4,7 +4,7 @@ import UIData from "./base/UIData";
 import UIController from "./UIController";
 import { ResManager } from "../res/ResManager";
 import { Singleton } from "../common/Singleton";
-import { Node, Prefab, Widget, instantiate } from "cc";
+import { Node, Prefab, instantiate } from "cc";
 import { IUI } from "./base/IUI";
 import { IPreload } from "./base/IPreload";
 import { IUIManager } from "./base/IUIManager";
@@ -41,12 +41,36 @@ export default class UIManager extends Singleton implements IUIManager {
 		this.layer.initRoot(uiRoot, this);
 	}
 
-	public openUI(uiId: number, data?: any): void {
+	/**获取层级节点 */
+	public layerNode(layerType: LayerType): Node {
+		return this.layer.getLayer(layerType);
+	}
+
+	/**
+	 * 预加载ui 
+	 * */
+	public preloadUI(uiId: number): void {
+		let uiData: UIData = this.controller.getUIData(uiId);
+		if (uiData == null) {
+			return;
+		}
+		ResManager.Instance().preLoad(uiData.prefabPath, uiData.bundleName);
+	}
+
+	/**
+	 * 打开ui界面
+	 * @param uiId 界面id
+	 * @param data 透传数据
+	 * @param layer 父容器节点，默认未空，添加到layer层，如果有只会使用此节点为父节点
+	 * @returns 
+	 */
+	public openUI(uiId: number, data?: any, layer?: Node): void {
 		let uiData: UIData = this.controller.getUIData(uiId);
 		if (uiData == null) {
 			return;
 		}
 		uiData.data = data;
+		uiData.parentNode = layer;
 		//检测是否缓存
 		if (this.cacheUIMap.has(uiId)) {
 			this.show(this.cacheUIMap.get(uiId));
@@ -79,12 +103,13 @@ export default class UIManager extends Singleton implements IUIManager {
 		let node: Node = instantiate(prefab);
 
 		//添加相对 布局节点
-		let widget: Widget = node.getComponent(Widget)
-		if (!widget) {
-			widget = node.addComponent(Widget)
-		}
-		widget.isAlignTop = widget.isAlignLeft = widget.isAlignRight = widget.isAlignBottom = true;
-		widget.top = widget.bottom = widget.left = widget.right = 0;
+		// let widget: Widget = node.getComponent(Widget)
+		// if (!widget) {
+		// 	widget = node.addComponent(Widget)
+		// }
+		// widget.isAlignTop = widget.isAlignLeft = widget.isAlignRight = widget.isAlignBottom = true;
+		// widget.top = widget.bottom = widget.left = widget.right = 0;
+		// widget.alignMode = Widget.AlignMode.ALWAYS;
 
 		//获取脚本
 		let uiBase: IUI = node.getComponent("UIBase") as any;
@@ -103,18 +128,19 @@ export default class UIManager extends Singleton implements IUIManager {
 				uiBase.uiData.closeFailed = false;
 				return;
 			}
-
 			if (!uiBase.node.parent) {
-				this.layer.addLayer(uiBase);
+				if (uiBase.uiData.parentNode) {
+					uiBase.node.parent = uiBase.uiData.parentNode;
+				} else {
+					this.layer.addLayer(uiBase);
+				}
 				this.popup.popup(uiBase);
 			}
 			uiBase.initView();
 		});
-
 		this.currOpen = null;
 		this.loadUI();
 	}
-
 
 	public closeUI(uiId: number | IUI): void {
 		let uiBase: IUI;
@@ -123,17 +149,17 @@ export default class UIManager extends Singleton implements IUIManager {
 		} else {
 			uiBase = this.cacheUIMap.get(uiId);
 		}
-
 		if (uiBase) {
 			//移除显示列表
-			if (uiBase.node.parent) {
+			if (uiBase.node?.parent) {
 				this.layer.removeLayer(uiBase);
 				uiBase.removeView();
 			}
 			//销毁
 			if (uiBase.isDestroy) {
 				this.cacheUIMap.delete(uiBase.uiData.id);
-				uiBase.node && uiBase.node.destroy();
+				ResManager.Instance().destroy(uiBase.uiData);
+				uiBase.node?.destroy();
 			}
 		} else {
 			//未加载成功就关闭页面 添加状态

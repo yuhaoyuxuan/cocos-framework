@@ -7,7 +7,7 @@ export class ResTask {
     /**资源地址 */
     url: string;
     /**资源类型 */
-    type: Asset;
+    type: Asset | any;
     /**加载资源的持有者 用于储存资源和删除资源的引用计数 */
     owner: any;
     /**回调 */

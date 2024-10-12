@@ -16,23 +16,23 @@ export class TimerManager extends SingletonComponent {
     /**
     * 注册1次定时器回调
     * @param interval 间隔时间单位s
-    * @param callback 回调函数
+    * @param callback 回调函数 上帧间隔s 透传参数
     * @param target 回调目标
     * @param param 透传参数 回调的时候会携带
     */
-    public once(interval: number, callback: Function, target: any, param?: any): void {
+    public once(interval: number, callback: (dt?: number, param?: any) => void, target: any, param?: any): void {
         this.on(interval, callback, target, param, 1);
     }
 
     /**
      * 注册循环定时器回调
-     * @param interval 间隔时间单位s
-     * @param callback 回调函数
+     * @param interval 间隔时间单位s 
+     * @param callback 回调函数  上帧间隔s 透传参数
      * @param target 回调目标
      * @param param 透传参数 回调的时候会携带
      * @param loop 循环次数 默认-1 循环调用
      */
-    public on(interval: number, callback: Function, target: any, param?: any, loop: number = -1): void {
+    public on(interval: number, callback: (dt?: number, param?: any) => void, target: any, param?: any, loop: number = -1): void {
         this.register(interval, callback, target, param, loop);
     }
 
@@ -68,7 +68,7 @@ export class TimerManager extends SingletonComponent {
                     timer.loop--;
                 }
                 timer.currInterval = timer.interval;
-                timer.callback.call(timer.target, timer.param);
+                timer.callback.call(timer.target, deltaTime, timer.param);
             }
             return timer.loop == 0;
         });

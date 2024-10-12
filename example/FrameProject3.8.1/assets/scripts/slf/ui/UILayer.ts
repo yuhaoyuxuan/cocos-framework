@@ -33,7 +33,7 @@ export default class UILayer {
         let value;
         /**添加层节点 */
         for (let key in LayerType) {
-            if(!isNaN(key as any)){
+            if (!isNaN(key as any)) {
                 continue;
             }
 
@@ -65,15 +65,24 @@ export default class UILayer {
      * @param uiBase 
      */
     public addLayer(uiBase: IUI): void {
-        if (!this.layerMap.has(uiBase.layerType)) {
-            console.error("addLayer none layer " + uiBase.layerType);
+        let node = this.getLayer(uiBase.layerType);
+        if (!node) {
             return;
         }
         if (uiBase.layerType == LayerType.Sole) {
             this.removeLayerAll(uiBase.layerType);
         }
-        this.layerMap.get(uiBase.layerType).addChild(uiBase.node);
+        node.addChild(uiBase.node);
         uiBase.isBlackMask && this.flushBlackMask(uiBase.layerType);
+    }
+
+    /**获取层级节点 */
+    public getLayer(layerType: LayerType): Node {
+        if (!this.layerMap.has(layerType)) {
+            console.error("addLayer none layer " + layerType);
+            return;
+        }
+        return this.layerMap.get(layerType);
     }
 
     /**
@@ -151,6 +160,7 @@ export default class UILayer {
         let widget: Widget = node.addComponent(Widget)
         widget.isAlignTop = widget.isAlignLeft = widget.isAlignRight = widget.isAlignBottom = true;
         widget.top = widget.bottom = widget.left = widget.right = offsetV;
+        widget.alignMode = Widget.AlignMode.ALWAYS;
     }
 
     /**刷新黑底 */

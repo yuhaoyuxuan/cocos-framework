@@ -15,18 +15,28 @@ import { Asset, Component, _decorator } from "cc";
 const { ccclass } = _decorator;
 @ccclass
 export default abstract class AComponent extends Component {
+    /**初始化只会调用一次 */
+    protected onLoad(): void { }
+    /**销毁只会调用一次 */
+    protected onDestroy(): void { }
+
+    /**预加载资源 */
+    protected preLoadRes(url: string | string[], bundleName: string = "resources"): void {
+        ResManager.Instance().preLoad(url, bundleName);
+    }
     /**
      * 加载资源
-     * @param url 
-     * @param type 
-     * @param callback 
-     * @param bundleName 
+     * @param url 资源相对bundle的路径
+     * @param type 资源类型
+     * @param callback 完成回调
+     * @param bundleName 包名
      */
-    protected loadRes(url: string, type: Asset, callback: (asset) => void, bundleName: string = "resources"): void {
+    protected loadRes<T>(url: string, type: Asset | any, callback: (asset: T) => void, bundleName: string = "resources"): void {
         ResManager.Instance().load(url, type, this, callback, this, bundleName);
     }
-
-    /**子类不可重写 销毁需要清理 请重写onDestroy */
+    /**
+     * 销毁前调用 子类不可重写
+     * 销毁需要清理 请重写onDestroy */
     public preDestroy(): void {
         ResManager.Instance().destroy(this);
         EventManager.Instance().targetOff(this);
@@ -34,9 +44,6 @@ export default abstract class AComponent extends Component {
         ComponentFindUtils.destroy(this);
     }
 
-    /**初始化只会调用一次 */
-    protected onLoad(): void { }
-    /**销毁只会调用一次 */
-    protected onDestroy(): void { }
+
 }
 

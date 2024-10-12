@@ -1,3 +1,5 @@
+import ObjIdGeneraterUtils from "./ObjIdGeneraterUtils";
+
 /**
  * 对象池
  * @author slf
@@ -59,14 +61,30 @@ export default class ObjPoolUtils {
         if (prototype.hasOwnProperty("__class__")) {
             return prototype["__class__"];
         }
-        var constructorString = prototype.constructor.toString().trim();
-        var index = constructorString.indexOf("(");
-        var className = constructorString.substring(9, index);
+        // var constructorString = prototype.constructor.toString().trim();
+        // var index = constructorString.indexOf("(");
+        // var className = constructorString.substring(9, index);
+        var className = ObjIdGeneraterUtils.getId + "_class";
         Object.defineProperty(prototype, "__class__", {
             value: className,
             enumerable: false,
             writable: true
         });
         return className;
+
+        // let constructor = null;
+        // if (typeof value === 'string') {
+        //     constructor = js.getClassByName(value);
+        //     if (!constructor) {
+        //         console.error("getQualifiedClassName error name=" + value);
+        //     }
+        // } else {
+        //     if (!value) {
+        //         console.error("getQualifiedClassName error name=" + value);
+        //     }
+        //     constructor = value;
+        // }
+
+        // return null
     }
 }

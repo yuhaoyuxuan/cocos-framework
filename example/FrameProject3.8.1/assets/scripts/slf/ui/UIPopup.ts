@@ -1,4 +1,4 @@
-import { UITransform, Vec2, Vec3, tween } from "cc";
+import { Tween, UITransform,  Vec3, Widget, tween } from "cc";
 import { IUI } from "./base/IUI";
 
 /**弹出类型 */
@@ -39,53 +39,54 @@ export default class UIPopup {
 		let vB: Vec3 = new Vec3(0, 0, 1);
 		let duration = 0.4;
 		let uiTransform = node.getComponent(UITransform);
-		tween(node).stop();
+		Tween.stopAllByTarget(node);
+		let widget = node.getComponent(Widget);
+		widget && (widget.enabled = false);
+		let tempTween;
 		switch (type) {
 			case PopupType.MinToMax:
 				vA.x = vA.y = 0;
 				vB.x = vB.y = 1;
-				tween(node)
+				tempTween = tween(node)
 					.set({ scale: vA })
 					.to(duration, { scale: vB }, { easing: 'backOut' })
-					.start();
 				break;
 			case PopupType.MaxToMin:
 				vA.x = vA.y = 2;
 				vB.x = vB.y = 1;
-				tween(node)
+				tempTween = tween(node)
 					.set({ scale: vA })
 					.to(duration, { scale: vB }, { easing: "backIn" })
-					.start();
 				break;
 			case PopupType.LeftToRight:
 				vA.x = -uiTransform.width;
-				tween(node)
+				tempTween = tween(node)
 					.set({ position: vA })
 					.to(duration, { position: vB }, { easing: "expoOut" })
-					.start();
 				break;
 			case PopupType.RightToLeft:
 				vA.x = uiTransform.width;
-				tween(node)
+				tempTween = tween(node)
 					.set({ position: vA })
 					.to(duration, { position: vB }, { easing: "expoOut" })
-					.start();
 				break;
 			case PopupType.TopToBottom:
-				vA.y = uiTransform.width;
-				tween(node)
+				vA.y = uiTransform.height;
+				tempTween = tween(node)
 					.set({ position: vA })
 					.to(duration, { position: vB }, { easing: "expoOut" })
-					.start();
 				break;
 			case PopupType.BottomToTop:
-				vA.y = -uiTransform.width;
-				tween(node)
+				vA.y = -uiTransform.height;
+				tempTween = tween(node)
 					.set({ position: vA })
 					.to(duration, { position: vB }, { easing: "expoOut" })
-					.start();
 				break;
 		}
+		tempTween.call(() => {
+			let widget = node.getComponent(Widget);
+			widget && (widget.enabled = true);
+		}).start();
 	}
 }
 
