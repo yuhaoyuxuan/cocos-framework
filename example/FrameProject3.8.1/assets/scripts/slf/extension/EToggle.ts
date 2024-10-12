@@ -1,42 +1,45 @@
-import { Toggle } from "cc";
-import { ICallback } from "./ICallback";
-
+import { Toggle } from 'cc';
+import { _decorator, Component, Node } from 'cc';
+import { ICallback } from './ICallback';
+import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'cc/env';
+const { ccclass, property } = _decorator;
 /**
  * 扩展cc.Toggle原型
- * 新增状态发生变化回调
+ * 新增设置点击(选中)回调
  * @author slf
  */
 declare module "cc" {
     interface Toggle {
         /**
-         * 设置状态发生变化回调
-         * @param callback 回调函数 checked是否被选中true、false
+         * 设置点击(选中)回调
+         * @param callback 回调函数
          * @param thisArg 回调目标
-         * @param arg 回调参数
+         * @param args 回调参数
          */
-        onToggleCheckCallback(callback: (checked: boolean, ...args) => void, thisArg?: any, ...arg): void
+        setClickCallback(callback: (checked: boolean, ...args) => void, thisArg?: any, ...args): void
     }
 }
 
-Toggle.prototype.onToggleCheckCallback = function (callback: (...args) => void, thisArg?: any, ...arg) {
-    if (!this.__callbackData_toggle) {
-        this.__callbackData_toggle = {};
+//不在编辑器 或 在编辑器预览运行
+if (!EDITOR || !EDITOR_NOT_IN_PREVIEW) {
+    Toggle.prototype.setClickCallback = function (callback: (checked: boolean, ...args) => void, thisArg?: any, ...args) {
+        if (!this.__callbackData__) {
+            this.__callbackData__ = {};
+        }
+        let cd: ICallback = this.__callbackData__;
+        cd.callback = callback;
+        cd.thisArg = thisArg;
+        cd.args = args;
     }
-    let cd: ICallback = this.__callbackData_toggle;
-    cd.callback = callback;
-    cd.thisArg = this.thisArg;
-    cd.arg = arg || [];
-}
 
-/**重写Toggle状态发生变化事件 */
-Toggle.prototype['_setClone'] = Toggle.prototype['_set'];
-Toggle.prototype['_set'] = function (value: boolean, emitEvent = true) {
-    this["_setClone"](value, emitEvent);
-    let cd: ICallback = this.__callbackData_toggle;
-    if (emitEvent && !!cd) {
-        cd.callback.apply(cd.thisArg, [value].concat(cd.arg));
+    Toggle.prototype['_setClone'] = Toggle.prototype['_set'];
+    Toggle.prototype['_set'] = function (value: boolean, emitEvent = true): void {
+        this["_setClone"](value, emitEvent);
+
+        let cd: ICallback = this.__callbackData__;
+        if (!cd || !emitEvent) {
+            return;
+        }
+        cd.callback.call(cd.thisArg, value, ...cd.args);
     }
 }
-
-
-

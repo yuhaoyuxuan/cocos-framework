@@ -5,6 +5,6 @@ export interface ICallback {
     /**回调目标 */
     thisArg?: any;
     /**透传参数 */
-    arg?: any[];
+    args?: any;
 }
 

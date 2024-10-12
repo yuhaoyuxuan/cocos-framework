@@ -97,23 +97,5 @@ export default class NumberUtils {
 		}
 		return (Math.floor(num / Math.pow(10, maxnum - 2)) / Math.pow(10, 2)).toFixed(numPoint) + unit
 	}
-
-
-	/**
-	 * 获取固定小数点（不会四舍五入）
-	 * @param num 数字
-	 * @param len 小数点长度>0
-	 * @returns 
-	 */
-	public static toFixed(num: number, len: number = 2): number {
-		let num: number = this;
-		if (!num) {
-			return 0;
-		}
-		if (num % 1 == 0) {
-			return num;
-		}
-		let strs = num.toString().split(".");
-		return Number(strs[0] + "." + strs[1].substring(0, decimals));
-	}
+	
 }
