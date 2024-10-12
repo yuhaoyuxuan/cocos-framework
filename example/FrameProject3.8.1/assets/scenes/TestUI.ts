@@ -32,8 +32,6 @@ export class TestUI extends Component {
         let str1 = str.format(1, 2);
         console.log(str1);
         TimerManager.Instance().targetOff(this);
-
-
     }
 }
 

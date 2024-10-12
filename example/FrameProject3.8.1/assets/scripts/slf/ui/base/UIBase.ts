@@ -48,10 +48,8 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 		this.preloadCb = null;
 	}
 
-	public initEvent(): void { }
 	public initView(): void { }
 	public removeView(): void { }
-	public destroyView(): void { }
 
 	/**
 	* 加载资源
@@ -72,7 +70,7 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 	}
 
 	/**关闭 */
-	public onClose(): void {
+	public close(): void {
 		UIManager.Instance().closeUI(this);
 	}
 }

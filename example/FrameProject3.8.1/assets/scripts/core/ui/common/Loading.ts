@@ -11,7 +11,7 @@ const { ccclass, property } = _decorator;
 export class Loading extends UIBase {
     private get nodeLogo(): Node { return ComponentFindUtils.findNode("nodeLogo", this); }
 
-    public initEvent(): void {
+    public onLoad(): void {
         tween(this.nodeLogo).by(2, { angle: -360 }).repeatForever().start();
     }
 

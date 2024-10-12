@@ -1,4 +1,5 @@
 import { _decorator, Component } from 'cc';
+import AComponent from './AComponent';
 const { ccclass, property } = _decorator;
 
 
@@ -7,7 +8,7 @@ const { ccclass, property } = _decorator;
  * @author slf
  *  */
 @ccclass('ItemRenderer')
-export abstract class AItemRenderer<T> extends Component {
+export abstract class AItemRenderer<T> extends AComponent {
     /**调用列表 回调函数  回调作用域*/
     protected callback: Function;
     protected cbThis: any;

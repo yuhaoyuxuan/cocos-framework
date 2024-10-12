@@ -12,9 +12,9 @@ export class TestPrefab extends UIBase {
     private get btnConfirm(): Button { return ComponentFindUtils.find<Button>("btnConfirm", Button, this); }
     private get btnClose(): Button { return ComponentFindUtils.find<Button>("btnClose", Button, this); }
 
-    public initEvent(): void {
-        this.btnClose.onClickCallback(this.onClose, this);
-        this.btnConfirm.onClickCallback(this.onTap, this);
+    public onLoad(): void {
+        this.btnClose.setClickCallback(this.onClose, this);
+        this.btnConfirm.setClickCallback(this.onTap, this);
     }
 
     public initView(): void {

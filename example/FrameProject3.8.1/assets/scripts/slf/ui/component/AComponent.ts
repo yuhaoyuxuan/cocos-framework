@@ -15,9 +15,6 @@ import { Asset, Component, _decorator } from "cc";
 const { ccclass } = _decorator;
 @ccclass
 export default abstract class AComponent extends Component {
-    protected onLoad(): void {
-        this.initEvent();
-    }
     /**
      * 加载资源
      * @param url 
@@ -29,17 +26,17 @@ export default abstract class AComponent extends Component {
         ResManager.Instance().load(url, type, this, callback, this, bundleName);
     }
 
-    /**todo 子类重写后记得 suepr */
+    /**子类不可重写 销毁需要清理 请重写onDestroy */
     public preDestroy(): void {
-        this.destroyView();
         ResManager.Instance().destroy(this);
         EventManager.Instance().targetOff(this);
         TimerManager.Instance().targetOff(this);
         ComponentFindUtils.destroy(this);
     }
-    /**初始化事件 */
-    protected initEvent(): void { }
-    /**销毁*/
-    protected destroyView(): void { }
+
+    /**初始化只会调用一次 */
+    protected onLoad(): void { }
+    /**销毁只会调用一次 */
+    protected onDestroy(): void { }
 }
 

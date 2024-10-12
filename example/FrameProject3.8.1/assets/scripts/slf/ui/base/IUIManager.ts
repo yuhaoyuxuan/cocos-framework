@@ -19,6 +19,10 @@ export interface IUIManager {
      * @param uiId id或ui数据 
      */
     closeUI(uiId: number | IUI): void
+    /**
+     * 关闭所有ui界面
+     */
+    closeAllUI(): void
 }
 
 

@@ -13,7 +13,7 @@ export class BagUI extends UIBase {
 
 
     protected start(): void {
-        this.btnClose.onClickCallback(this.onClose, this);
+        this.btnClose.setClickCallback(this.close, this);
     }
 
 }

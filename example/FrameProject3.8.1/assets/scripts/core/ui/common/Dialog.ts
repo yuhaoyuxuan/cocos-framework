@@ -16,9 +16,9 @@ export class Dialog extends UIBase {
     private get btnLoading(): Button { return ComponentFindUtils.find<Button>("btnLoading", Button, this); }
 
 
-    public initEvent(): void {
-        this.btnClose.onClickCallback(this.onClose, this);
-        this.btnLoading.onClickCallback(this.onLoading, this);
+    public onLoad(): void {
+        this.btnClose.setClickCallback(this.close, this);
+        this.btnLoading.setClickCallback(this.onLoading, this);
     }
 
     private onLoading(): void {

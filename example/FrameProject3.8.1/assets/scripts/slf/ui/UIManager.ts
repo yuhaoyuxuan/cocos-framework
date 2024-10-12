@@ -1,5 +1,5 @@
 import UIPopup from "./UIPopup";
-import UILayer from "./UILayer";
+import UILayer, { LayerType } from "./UILayer";
 import UIData from "./base/UIData";
 import UIController from "./UIController";
 import { ResManager } from "../res/ResManager";
@@ -37,27 +37,16 @@ export default class UIManager extends Singleton implements IUIManager {
 		this.openList = [];
 	}
 
-	/**
-	 * 初始化容器
-	 * @param uiRoot ui根容器
-	 */
 	public initRoot(uiRoot: Node): void {
 		this.layer.initRoot(uiRoot, this);
 	}
 
-	/**
-	 * 打开ui界面
-	 * @param uiId 界面id
-	 * @param data 透传数据
-	 * @returns 
-	 */
 	public openUI(uiId: number, data?: any): void {
 		let uiData: UIData = this.controller.getUIData(uiId);
 		if (uiData == null) {
 			return;
 		}
 		uiData.data = data;
-
 		//检测是否缓存
 		if (this.cacheUIMap.has(uiId)) {
 			this.show(this.cacheUIMap.get(uiId));
@@ -66,7 +55,7 @@ export default class UIManager extends Singleton implements IUIManager {
 
 		//加入待打开队列
 		let index = this.openList.indexOf(uiData);
-		if (index != -1) {//ui已在带打开队列
+		if (index != -1) {//ui已在等待打开队列
 			this.openList[index].data = data;
 		} else {
 			this.openList.push(uiData);
@@ -120,17 +109,13 @@ export default class UIManager extends Singleton implements IUIManager {
 				this.popup.popup(uiBase);
 			}
 			uiBase.initView();
-
 		});
 
 		this.currOpen = null;
 		this.loadUI();
 	}
 
-	/**
-	 * 关闭ui界面
-	 * @param uiId id 或 ui脚本
-	 */
+
 	public closeUI(uiId: number | IUI): void {
 		let uiBase: IUI;
 		if (typeof (uiId) != "number") {
@@ -157,5 +142,9 @@ export default class UIManager extends Singleton implements IUIManager {
 				uData.closeFailed = true;
 			}
 		}
+	}
+
+	public closeAllUI(): void {
+		this.layer.removeLayerAll([LayerType.Scene, LayerType.Sole, LayerType.Panel, LayerType.Dialog]);
 	}
 }

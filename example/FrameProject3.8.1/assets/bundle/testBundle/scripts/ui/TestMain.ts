@@ -10,8 +10,8 @@ const { ccclass, property } = _decorator;
 export class TestMain extends UIBase {
     private get btnJump(): Button { return ComponentFindUtils.find<Button>("btnJump", Button, this); }
 
-    public initEvent(): void {
-        this.btnJump.onClickCallback(this.onTap, this);
+    public onLoad(): void {
+        this.btnJump.setClickCallback(this.onTap, this);
     }
 
     private onTap(): void {
