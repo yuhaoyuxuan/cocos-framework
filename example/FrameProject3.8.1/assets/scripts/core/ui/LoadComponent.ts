@@ -17,8 +17,8 @@ export class LoadComponent extends AComponent {
 
     private callback: Function;
     private target: any;
-    protected initEvent(): void {
-        this.btnConfirm.onClickCallback(this.onTap, this);
+    protected onLoad(): void {
+        this.btnConfirm.setClickCallback(this.onTap, this);
         this.btnConfirm.node.active = false;
     }
 

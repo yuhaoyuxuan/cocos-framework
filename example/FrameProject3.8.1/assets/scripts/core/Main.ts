@@ -1,5 +1,5 @@
 import { _decorator, Component, Node } from 'cc';
-import { UIConfigMain } from './ui/config/UIConfigMain';
+import { UIConfigMain, UIMainId } from './ui/config/UIConfigMain';
 import UIManager from '../slf/ui/UIManager';
 import { LoadComponent } from './ui/LoadComponent';
 const { ccclass, property } = _decorator;
@@ -26,7 +26,7 @@ export class Main extends Component {
 
     /**初始化加载完成 */
     private loadComplete(): void {
-        UIManager.Instance().openUI(100);
+        UIManager.Instance().openUI(UIMainId.Dialog);
     }
 
 }
