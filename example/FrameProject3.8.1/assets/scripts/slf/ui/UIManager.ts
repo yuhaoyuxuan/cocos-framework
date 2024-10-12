@@ -11,7 +11,6 @@ import { IUIManager } from "./base/IUIManager";
 
 /**
  * ui界面管理类
- * 
  * @author slf
  * */
 export default class UIManager extends Singleton implements IUIManager {

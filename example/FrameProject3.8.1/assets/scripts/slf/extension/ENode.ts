@@ -1,9 +1,9 @@
 import { Tween, Node, Vec3, tween, ITweenOption, UITransform } from "cc";
+/**
+ * 扩展Node原型
+ * @author slf
+ */
 declare module 'cc' {
-    /**
-     * 扩展Node原型
-     * @author slf
-     */
     interface Node {
         /**uiTransform */
         get uiTransform(): UITransform

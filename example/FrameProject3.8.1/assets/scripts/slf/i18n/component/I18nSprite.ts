@@ -13,6 +13,7 @@ export class I18nSpriteData{
 
 /**
  * 多语言精灵图片
+ * @author slf
  */
 @ccclass('I18nSprite')
 @requireComponent(Sprite)

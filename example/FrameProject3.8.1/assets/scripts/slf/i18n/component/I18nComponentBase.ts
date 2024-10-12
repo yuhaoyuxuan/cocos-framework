@@ -4,6 +4,7 @@ const { ccclass, property } = _decorator;
 
 /**
  * 多语言抽象组件基类
+ * @author slf
  */
 @ccclass('I18nComponentBase')
 export abstract class I18nComponentBase extends Component {

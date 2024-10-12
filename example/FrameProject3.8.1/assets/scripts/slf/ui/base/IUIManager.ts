@@ -1,7 +1,10 @@
 import { IUI } from "./IUI";
 import { Node } from "cc";
 
-/**ui管理接口 */
+/**
+ * ui管理接口
+ * @author slf
+ */
 export interface IUIManager {
     /**
      * 初始化根容器

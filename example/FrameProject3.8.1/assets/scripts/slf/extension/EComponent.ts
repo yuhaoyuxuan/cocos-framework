@@ -2,6 +2,7 @@ import { Component } from "cc"
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from "cc/env";
 /**
  * 扩展cc.Component(组件基类)原型
+ * @author slf
  */
 declare module "cc" {
     interface Component {

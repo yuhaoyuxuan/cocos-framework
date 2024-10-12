@@ -1,3 +1,7 @@
+import { Sprite } from "cc";
+import { Color } from "cc";
+import { Label, Node } from "cc";
+
 /**
  * 通用工具
  * @author slf
@@ -181,11 +185,11 @@ export default class CommonUtils {
 	}
 
 
-    /**
-     * 一键复制 
-     * @param str 需要复制的文本
-     */
-	 public static  copyStr(str): boolean {
+	/**
+	 * 一键复制 
+	 * @param str 需要复制的文本
+	 */
+	public static copyStr(str): boolean {
 		try {
 			var oInput = document.createElement('input');
 			oInput.value = str;
@@ -199,52 +203,56 @@ export default class CommonUtils {
 			console.log("复制失败");
 			return false;
 		}
-    }
+	}
 
-    /**刷新浏览器 */
-    public static refreshBrowser(): void {
-        window.location.reload();
-    }
+	/**刷新浏览器 */
+	public static refreshBrowser(): void {
+		window.location.reload();
+	}
 
 
 	/**解析浏览器参数 */
-    public static parseBrowserArgs(): any {
-        let param = window.location.search;
-        let paramObj = {};
-        if (param) {
-            param = param.replace("?", "");
-            let strArr = param.split("&");
-            let parArr;
-            strArr.forEach(str => {
-                parArr = str.split("=");
-                paramObj[parArr[0]] = parArr[1]
-            }, this);
-        }
-        return paramObj
-    }
+	public static parseBrowserArgs(): any {
+		let param = window.location.search;
+		let paramObj = {};
+		if (param) {
+			param = param.replace("?", "");
+			let strArr = param.split("&");
+			let parArr;
+			strArr.forEach(str => {
+				parArr = str.split("=");
+				paramObj[parArr[0]] = parArr[1]
+			}, this);
+		}
+		return paramObj
+	}
 
-    /**
-     * 设置灰色滤镜
-     * @param node node节点 或 label、sprite组件
-     * @param gray true变灰 
-     * @param children 子项是否变灰 默认false 只有node会有子项
-     */
-	 public static setGray(node: cc.Node | cc.Label | cc.Sprite, gray: boolean = true, children?: boolean): void {
-        let target: any = node;
-        let materialType: any = gray ? cc.Material.BUILTIN_NAME.GRAY_SPRITE : cc.Material.BUILTIN_NAME.SPRITE;
-        var material = cc.Material.getBuiltinMaterial(materialType);
-        if (node instanceof cc.Node) {
-            target = node.getComponent(cc.Sprite);
-            target && target.setMaterial(0, material);
-            target = node.getComponent(cc.Label);
-            target && target.setMaterial(0, material);
-            children && node.children.forEach(subNode => {
-                this.setGray(subNode, gray, children);
-            }, this)
-        } else {
-            target && target.setMaterial(0, material);
-        }
-    }
-
-
+	/**
+	 * 设置灰色滤镜
+	 * @param node node节点 子项变灰 如果是文本修改alpha值
+	 * @param gray true变灰 
+	 */
+	public static setAlpha(node: Node, gray: boolean = true): void {
+		node.children.forEach(node => {
+			CommonUtils.setAlpha(node, gray);
+		});
+		let target: any = node.getComponent(Label);
+		if (target) {
+			if (gray) {
+				target.___oldColor__ = target.color.clone();
+			}
+			let color: Color = target.color;
+			if (gray) {
+				color.a = color.a * 0.6;
+			} else {
+				color = target.___oldColor__;
+			}
+			target.color = color;
+		} else {
+			target = node.getComponent(Sprite);
+			if (target) {
+				target.grayscale = gray;
+			}
+		}
+	}
 }

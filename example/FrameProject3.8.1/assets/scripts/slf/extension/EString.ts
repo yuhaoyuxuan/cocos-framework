@@ -1,5 +1,6 @@
 /**
  * 扩展字符串原型
+ * @author slf
  */
 interface String {
     /**

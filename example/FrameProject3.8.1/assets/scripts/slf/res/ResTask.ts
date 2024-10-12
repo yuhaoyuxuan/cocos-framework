@@ -2,7 +2,10 @@ import { Asset } from "cc";
 import ObjIdGeneraterUtils from "../utils/ObjIdGeneraterUtils";
 import { ResManager } from "./ResManager";
 
-/**资源任务 */
+/**
+ * 资源任务
+ * @author slf
+ */
 export class ResTask {
     /**资源地址 */
     url: string;

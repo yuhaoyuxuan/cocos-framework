@@ -1,6 +1,7 @@
 
 /**
  * 扩展Number原型
+ * @author slf
  */
 interface Number {
     /**

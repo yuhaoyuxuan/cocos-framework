@@ -1,5 +1,6 @@
 /**
  * 扩展Array原型
+ * @author slf
  */
 interface Array<T> {
     /**

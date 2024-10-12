@@ -8,7 +8,6 @@ import { Color } from "cc";
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from "cc/env";
 /**
  * 扩展cc.Button原型
- * 新增设置点击回调
  * @author slf
  */
 declare module "cc" {
