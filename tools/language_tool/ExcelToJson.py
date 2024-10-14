@@ -8,7 +8,6 @@ import shutil
 
 outPath = "./outTs/"
 headStr = 'export {}; \nif (!globalThis.i18nConfig) globalThis.i18nConfig = {};\nglobalThis.i18nConfig.'
-desatPath = '../../cc-texas-client/assets/Script/framework/i18nMaster/i18n/'
 
 def readFromExcel(filepath, dicts):
     wr = xlrd.open_workbook(filepath)

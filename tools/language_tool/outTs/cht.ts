@@ -1,5 +1,5 @@
 export {}; 
 if (!globalThis.i18nConfig) globalThis.i18nConfig = {};
-globalThis.i18nConfig.es = {
-    "win": "GRAN PREMIO"
+globalThis.i18nConfig.cht = {
+    "test": "一"
 }
