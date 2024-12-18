@@ -9,7 +9,7 @@ export default class UIData {
     public prefabPath: string;
     /**是否同步 */
     public isSync: boolean;
-    /**包名 */
+    /**包名 默认 resources */
     public bundleName: string;
     /**透传数据*/
     public data: any;
@@ -25,10 +25,9 @@ export default class UIData {
      * @param bundleName 包名 默认resources包
      * @param isSync 是否同步加载
      */
-    constructor(id: number, prefabPath: string, bundleName: string = "resources", isSync?: boolean) {
+    constructor(id: number, prefabPath: string, isSync?: boolean) {
         this.id = id;
         this.prefabPath = prefabPath;
-        this.bundleName = bundleName;
         this.isSync = isSync;
     }
 }

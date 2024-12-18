@@ -75,7 +75,7 @@ export class ResManager extends Singleton {
             }
 
             this.loadIn.forEach(task => {
-                task.isCancel = task.target.uuid == id;
+                task.isCancel = task.target?.uuid == id;
             });
         }
     }

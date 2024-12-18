@@ -414,7 +414,7 @@ export default class AVirtualScrollView extends ScrollView {
             pos = item.getPosition();
             tempV = this.getPos(start + i);;
             if (pos.x != tempV || this.forcedRefreshMark) {
-                console.log("修改的数据=" + (start + i))
+                // console.log("修改的数据=" + (start + i))
                 pos.x = tempV;
                 item.position = pos;
                 this.itemRendererList[idx].node.nowDataIdx = start + i;
@@ -450,7 +450,7 @@ export default class AVirtualScrollView extends ScrollView {
             pos = item.getPosition();
             tempV = this.getPos(start + i);
             if (pos.y != tempV || this.forcedRefreshMark) {
-                console.log("修改的数据=" + (start + i));
+                // console.log("修改的数据=" + (start + i));
                 pos.y = tempV;
                 item.position = pos;
                 this.itemRendererList[idx].node.nowDataIdx = start + i;
@@ -507,7 +507,7 @@ export default class AVirtualScrollView extends ScrollView {
             }
 
             if (pos.y != tempY || pos.x != tempX || this.forcedRefreshMark) {
-                console.log("修改的数据=" + (start + i))
+                // console.log("修改的数据=" + (start + i))
                 pos.x = tempX;
                 pos.y = tempY;
                 item.position = pos;

@@ -52,7 +52,7 @@ export default class EventManager extends Singleton {
      * @param arg 参数
      */
     public emit(message: string, ...arg): void {
-        this.publish(message, arg);
+        this.publish(message, ...arg);
     }
 
 

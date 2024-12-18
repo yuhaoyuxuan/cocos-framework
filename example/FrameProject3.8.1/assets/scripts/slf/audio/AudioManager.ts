@@ -8,7 +8,8 @@ import { AudioTask } from "./AudioTask";
  * @author slf
  */
 export class AudioManager extends SingletonComponent {
-    private AUDIO_ON_OFF: string = "AUDIO_ON_OFF";
+    private AUDIO_MUSIC_ON_OFF: string = "AUDIO_MUSIC_ON_OFF";
+    private AUDIO_SOUND_ON_OFF: string = "AUDIO_SOUND_ON_OFF";
     /**音频管理队列 循环播放 */
     private list: AudioTask[];
     /**一次音效播放 */
@@ -19,14 +20,18 @@ export class AudioManager extends SingletonComponent {
     private bgPath: string;
     /**音量 */
     private volumeScale: number = 1;
-    private isOpen: boolean = false;
+    /**背景音乐 */
+    private _isMusicOpen: boolean = false;
+    /**音效 */
+    private _isSoundOpen: boolean = false;
 
 
 
     protected init(): void {
         this.oneShotAudioSource = this.node.addComponent(AudioSource);
         this.bgAudioSource = new AudioTask(this.node).aSource;
-        this.onOff = !(LocalStorageManager.Instance().get(this.AUDIO_ON_OFF) == "0");
+        this._isMusicOpen = !(LocalStorageManager.Instance().get(this.AUDIO_MUSIC_ON_OFF) == "0");
+        this._isSoundOpen = !(LocalStorageManager.Instance().get(this.AUDIO_SOUND_ON_OFF) == "0");
         this.list = [];
         for (let i = 0; i < 5; i++) {
             this.list.push(new AudioTask(this.node));
@@ -34,27 +39,41 @@ export class AudioManager extends SingletonComponent {
 
     }
 
-    public get onOff(): boolean {
-        return this.isOpen;
+    /**
+  * 音效开关
+  * @param isOpen 
+  */
+    public get isSoundOpen(): boolean {
+        return this._isSoundOpen;
+    }
+
+    public set isSoundOpen(isOpen: boolean) {
+        if (this._isSoundOpen == isOpen) {
+            return;
+        }
+        this._isSoundOpen = isOpen;
+        LocalStorageManager.Instance().set(this.AUDIO_SOUND_ON_OFF, isOpen ? "1" : "0");
     }
 
     /**
-     * 音频开关
-     * @param isOpen 
-     */
-    public set onOff(isOpen: boolean) {
-        if (this.isOpen == isOpen) {
+    * 背景音乐开关
+    * @param isOpen 
+    */
+    public get isMusicOpen(): boolean {
+        return this._isMusicOpen;
+    }
+    public set isMusicOpen(isOpen: boolean) {
+        if (this._isMusicOpen == isOpen) {
             return;
         }
-
-        this.isOpen = isOpen;
-        if (!this.isOpen) {
+        this._isMusicOpen = isOpen;
+        if (!this._isMusicOpen) {
             this.bgAudioSource.pause();
             this.stopAllLoop();
         } else {
             this.bgAudioSource.play();
         }
-        LocalStorageManager.Instance().set(this.AUDIO_ON_OFF, isOpen ? "1" : "0");
+        LocalStorageManager.Instance().set(this.AUDIO_MUSIC_ON_OFF, isOpen ? "1" : "0");
     }
 
     /**
@@ -67,12 +86,12 @@ export class AudioManager extends SingletonComponent {
      * @returns 
      */
     public play(path: string, owner?: any, volume: number = 1, bundleName: string = "resources"): void {
-        if (!this.isOpen) {
+        if (!this.isSoundOpen) {
             return;
         }
 
         ResManager.Instance().load<AudioClip>(path, AudioClip, owner || this, asset => {
-            if (this.isOpen) {
+            if (this.isSoundOpen) {
                 this.oneShotAudioSource.playOneShot(asset, volume * this.volumeScale);
             }
         }, this, bundleName);
@@ -81,12 +100,12 @@ export class AudioManager extends SingletonComponent {
 
     /**播放循环音效 */
     public playLoop(path: string, owner?: any, volume: number = 1, bundleName: string = "resources"): void {
-        if (!this.isOpen) {
+        if (!this.isSoundOpen) {
             return;
         }
 
         ResManager.Instance().load<AudioClip>(path, AudioClip, owner || this, asset => {
-            this.isOpen && this.getAudioTask().play(asset, path, volume * this.volumeScale);
+            this.isSoundOpen && this.getAudioTask().play(asset, path, volume * this.volumeScale);
         }, this, bundleName);
     }
 
@@ -106,7 +125,7 @@ export class AudioManager extends SingletonComponent {
             this.bgAudioSource.volume = this.volumeScale * volume;
             this.bgAudioSource.clip = clip;
             this.bgAudioSource.loop = true;
-            if (this.isOpen) {
+            if (this.isMusicOpen) {
                 this.bgAudioSource.play();
             } else {
                 this.bgAudioSource.stop();
@@ -115,7 +134,7 @@ export class AudioManager extends SingletonComponent {
         }
         owner = owner || this;
         if (clip == this.bgPath) {
-            this.isPauseBg(false);
+            // this.isPauseBg(false);
             return;
         }
         this.bgPath = clip;
@@ -128,7 +147,7 @@ export class AudioManager extends SingletonComponent {
     private isPauseBg(pause: boolean): void {
         if (pause) {
             this.bgAudioSource.pause();
-        } else if (this.isOpen) {
+        } else if (this.isMusicOpen) {
             this.bgAudioSource.play();
         }
     }

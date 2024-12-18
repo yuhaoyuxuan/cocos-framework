@@ -3,6 +3,14 @@
  * @author slf
  */
 export default class DateUtils {
+
+	/**一分钟 s */
+	public static Minute: number = 60;
+	/**一小时 s */
+	public static Hour: number = this.Minute * 60;
+	/**一天 s */
+	public static Day: number = this.Hour * 24;
+
 	/**
 	 * 获取当前时间戳(毫秒)
 	 */
@@ -47,10 +55,11 @@ export default class DateUtils {
 	/**
 	 * 获取倒计时
 	 * @param second 秒
+	 * @param showSecond 是否显示秒
 	 * @returns 天:时:分:秒
 	 *  */
-	public static getCD(second: number): string {
-		let str ="";
+	public static getCD(second: number, showSecond: boolean = true): string {
+		let str = "";
 		if (second == 0) {
 			return '0'
 		}
@@ -58,18 +67,21 @@ export default class DateUtils {
 		let hour = Math.floor(minute / 60);
 		let day = Math.floor(hour / 24);
 
-		if(day>0){
-			str+=day+"天";
+		if (day > 0) {
+			str += day + "天";
 		}
-		if(hour%24>0){
-			str+=(hour%24)+"小时";
+		if (hour % 24 > 0) {
+			str += (hour % 24) + "小时";
 		}
-		if(minute%60>0){
-			str+=(minute%60)+"分";
+		if (minute % 60 > 0) {
+			str += (minute % 60) + "分";
 		}
 
-		str+=this.pad(second % 60)+"秒";
-
+		if (showSecond) {
+			str += this.pad(second % 60) + "秒";
+		} else if (str == "" && second > 0) {
+			str += "1分钟";
+		}
 		return str;
 	}
 

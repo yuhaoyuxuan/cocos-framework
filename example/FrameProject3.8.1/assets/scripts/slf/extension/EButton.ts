@@ -47,10 +47,11 @@ declare module "cc" {
          * todo (白色图的灰度模式不生效)
         */
         grayscale: boolean;
-    }
 
-    /**播放点击音效 */
-    export let clickPlaySound: Function;
+        __stopClickSound: boolean;
+        /**禁止播放点击音效 */
+        stopClickSound: boolean;
+    }
 }
 
 
@@ -83,6 +84,7 @@ if (!EDITOR || !EDITOR_NOT_IN_PREVIEW) {
         this.__clickIntervalOld = 0;
     }
 
+
     //重写按钮点击开始
     Button.prototype['_onTouchBeganClone'] = Button.prototype['_onTouchBegan'];
     Button.prototype['_onTouchBegan'] = function (event?: EventTouch) {
@@ -97,7 +99,7 @@ if (!EDITOR || !EDITOR_NOT_IN_PREVIEW) {
             return;
         }
 
-        EButtonObj.clickPlaySoundFun?.call(null);
+        !this.__stopClickSound && EButtonObj.clickPlaySoundFun?.call(null);
         event.preventSwallow = !!this.__preventSwallow;
         this["_onTouchEndedClone"](event);
 
@@ -136,6 +138,17 @@ if (!EDITOR || !EDITOR_NOT_IN_PREVIEW) {
 
             this._interactable = !v;
             setAlpha(this.node, v)
+
+        },
+        configurable: true
+    })
+
+    Object.defineProperty(Button.prototype, "stopClickSound", {
+        get() {
+            return this.__stopClickSound;
+        },
+        set(v) {
+            this.__stopClickSound = v;
 
         },
         configurable: true

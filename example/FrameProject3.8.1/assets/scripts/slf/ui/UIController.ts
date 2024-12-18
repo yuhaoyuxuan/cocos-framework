@@ -9,8 +9,9 @@ export default class UIController {
     /**
      * 注册ui数据
      * @param data ui数据
+     * @param bundleName 包名
      */
-    public register(data: UIData | UIData[]): void {
+    public register(data: UIData | UIData[], bundleName: string = "resources"): void {
         if (Array.isArray(data)) {
             data.forEach(v => {
                 this.register(v);
@@ -22,6 +23,7 @@ export default class UIController {
             console.error("register error id same =" + data.id);
         }
         else {
+            data.bundleName = bundleName;
             this.uiDataMap.set(data.id, data);
         }
     }

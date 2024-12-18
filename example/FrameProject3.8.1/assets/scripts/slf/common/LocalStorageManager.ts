@@ -15,12 +15,12 @@ export class LocalStorageManager extends Singleton {
     }
 
     /**设置缓存*/
-    public set(key: string, value: string) {
+    public set(key: any, value: any) {
         sys.localStorage.setItem(this.transformKey(key), value);
     }
 
     /**获取缓存 */
-    public get(key: string): string {
+    public get(key: any): string {
         return sys.localStorage.getItem(this.transformKey(key)) || "";
     }
 
@@ -30,7 +30,7 @@ export class LocalStorageManager extends Singleton {
     }
 
 
-    private transformKey(key: string): string {
+    private transformKey(key: any): string {
         return `${this.only}_${key}`
     }
 }
