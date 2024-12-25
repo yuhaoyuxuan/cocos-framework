@@ -8,6 +8,7 @@ import { Node, Prefab, instantiate } from "cc";
 import { IUI } from "./base/IUI";
 import { IPreload } from "./base/IPreload";
 import { IUIManager } from "./base/IUIManager";
+import UIBase from "./base/UIBase";
 
 /**
  * ui界面管理类
@@ -100,18 +101,8 @@ export default class UIManager extends Singleton implements IUIManager {
 	/**加载完成 */
 	private loadComplete(prefab: Prefab): void {
 		let node: Node = instantiate(prefab);
-
-		//添加相对 布局节点
-		// let widget: Widget = node.getComponent(Widget)
-		// if (!widget) {
-		// 	widget = node.addComponent(Widget)
-		// }
-		// widget.isAlignTop = widget.isAlignLeft = widget.isAlignRight = widget.isAlignBottom = true;
-		// widget.top = widget.bottom = widget.left = widget.right = 0;
-		// widget.alignMode = Widget.AlignMode.ALWAYS;
-
 		//获取脚本
-		let uiBase: IUI = node.getComponent("UIBase") as any;
+		let uiBase: IUI = node.getComponent(UIBase);
 		this.cacheUIMap.set(this.currOpen.id, uiBase);
 		uiBase.uiData = this.currOpen;
 		this.show(uiBase);
@@ -136,6 +127,7 @@ export default class UIManager extends Singleton implements IUIManager {
 				this.popup.popup(uiBase);
 			}
 			uiBase.initView();
+			uiBase.layerType == LayerType.FullScreen && this.checkFullScreen();
 		});
 		this.currOpen = null;
 		this.loadUI();
@@ -154,6 +146,7 @@ export default class UIManager extends Singleton implements IUIManager {
 				this.layer.removeLayer(uiBase);
 				uiBase.removeView();
 			}
+			uiBase.layerType == LayerType.FullScreen && this.checkFullScreen();
 			//销毁
 			if (uiBase.isDestroy) {
 				this.cacheUIMap.delete(uiBase.uiData.id);
@@ -170,6 +163,22 @@ export default class UIManager extends Singleton implements IUIManager {
 	}
 
 	public closeAllUI(): void {
-		this.layer.removeLayerAll([LayerType.Scene, LayerType.Sole, LayerType.Panel, LayerType.Dialog]);
+		this.layer.removeLayerAll([LayerType.FullScreen, LayerType.Panel]);
+	}
+
+	/** 
+	 * 检测全屏界面 
+	 * 只显示最上层的一个 其他隐藏
+	 */
+	private checkFullScreen() {
+		let show: boolean = true;
+		let node = this.layerNode(LayerType.FullScreen);
+		let len = node.children.length;
+		while (--len >= 0) {
+			if (node.children[len]) {
+				node.children[len].active = show;
+				show = false;
+			}
+		}
 	}
 }

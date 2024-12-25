@@ -4,14 +4,10 @@ import { IUIManager } from "./base/IUIManager";
 
 /**层级类型 */
 export enum LayerType {
-    /** 场景层*/
-    Scene,
-    /** 唯一层 互斥，同时只会存在一个*/
-    Sole,
+    /** 全屏层 如果有多个全屏界面，下层界面会隐藏 减少性能消耗*/
+    FullScreen,
     /** 面板层 */
     Panel,
-    /** 对话框层 */
-    Dialog,
     /** 加载、通信层 */
     Loading
 }
@@ -36,16 +32,13 @@ export default class UILayer {
             if (!isNaN(key as any)) {
                 continue;
             }
-
             value = LayerType[key];
             this.layerMap.set(value, this.addNode(key));
 
-            if (value == LayerType.Scene.toString() || value == LayerType.Loading.toString()) {
-                continue;
-            }
-
             //添加层遮罩节点
-            this.layerMaskMap.set(value, this.addBlack(key, this.layerMap.get(value)));
+            if (value == LayerType.Panel.toString()) {
+                this.layerMaskMap.set(value, this.addBlack(key, this.layerMap.get(value)));
+            }
         }
     }
 
@@ -68,9 +61,6 @@ export default class UILayer {
         let node = this.getLayer(uiBase.layerType);
         if (!node) {
             return;
-        }
-        if (uiBase.layerType == LayerType.Sole) {
-            this.removeLayerAll(uiBase.layerType);
         }
         node.addChild(uiBase.node);
         uiBase.isBlackMask && this.flushBlackMask(uiBase.layerType);
@@ -138,6 +128,7 @@ export default class UILayer {
         black.active = false;
         this.setGraphicsSize(gh);
         black.parent = parent;
+        black.on(Node.EventType.SIZE_CHANGED, this.setGraphicsSize.bind(this, gh));
         return black;
     }
 

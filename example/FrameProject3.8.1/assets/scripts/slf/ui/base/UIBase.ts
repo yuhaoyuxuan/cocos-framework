@@ -20,12 +20,12 @@ export default class UIBase extends AComponent implements IUI, IPreload {
 	/**弹出效果 */
 	@property({ type: Enum(PopupType), tooltip: "弹出效果" })
 	public popupType: PopupType = PopupType.None;
-	/**是否显示半透黑底*/
-	@property({ tooltip: "是否显示半透黑底", visible() { return this.layerType == LayerType.Sole || this.layerType == LayerType.Panel } })
-	public isBlackMask: boolean = true;
 	/**关闭面板是否销毁*/
 	@property({ tooltip: "关闭面板是否销毁" })
 	public isDestroy: boolean = true;
+	/**是否显示半透黑底*/
+	@property({ tooltip: "是否显示半透黑底", visible() { return this.layerType == LayerType.Panel } })
+	public isBlackMask: boolean = true;
 
 	public uiData: UIData;
 	protected preloadCb: Function;
