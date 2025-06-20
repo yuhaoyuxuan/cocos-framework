@@ -1,4 +1,4 @@
-import { Asset, AssetManager, assetManager } from "cc";
+import { Asset, AssetManager, assetManager, ImageAsset, SpriteFrame, Texture2D } from "cc";
 import { Singleton } from "../common/Singleton";
 import { BundleResData } from "./BundleResData";
 import { ResTask } from "./ResTask";
@@ -143,7 +143,7 @@ export class ResManager extends Singleton {
         this.loadIn.push(task);
         let reg = /http.?:\/\//;
         if (reg.test(task.url)) {
-            assetManager.loadRemote(task.url, this.parseAsset.bind(this, task));
+            assetManager.loadRemote(task.url, this.parseAssetRemote.bind(this, task));
         } else {
             if (!bRes) {
                 this.loadBundle(task.bundleName, bundle => {
@@ -157,10 +157,6 @@ export class ResManager extends Singleton {
 
     /**
      * 解析资源
-     * @param task 
-     * @param error 
-     * @param asset 
-     * @returns 
      */
     private parseAsset(task: ResTask, error: Error, asset: Asset): void {
         if (error || task.isCancel) {
@@ -168,6 +164,34 @@ export class ResManager extends Singleton {
             this.recycleResTask(task);
             return;
         }
+
+        this.loadComplete(task, asset);
+    }
+    /**
+     * 远程资源解析逻辑
+     */
+    private parseAssetRemote(task: ResTask, error: Error, asset: Asset): void {
+        if (error || task.isCancel) {
+            error && console.error("parseAssetRemote error = ", error);
+            this.recycleResTask(task);
+            return;
+        }
+
+        //类型是精灵帧资源 需要把 ImageAsset 转换成 SpriteFrame
+        //防止每次使用都要从新实例化Texture2D导致纹理内存一直增加
+        if (task.type == SpriteFrame) {
+            //并设置asset为远程资源
+            const spriteFrame: SpriteFrame = new SpriteFrame();
+            const texture: Texture2D = new Texture2D();
+            texture.image = asset as ImageAsset;
+            asset.addRef();
+            spriteFrame.packable = false;
+            spriteFrame.texture = texture;
+            spriteFrame["remoteSpriteFrame"] = true;
+            asset = spriteFrame;
+        }
+
+
         this.loadComplete(task, asset);
     }
 

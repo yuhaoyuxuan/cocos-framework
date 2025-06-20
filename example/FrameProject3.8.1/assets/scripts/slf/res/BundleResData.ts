@@ -22,6 +22,20 @@ export class BundleResData {
 
     /**销毁资源 */
     public destroy(): void {
+        this.urlToAssetMap.forEach((asset) => {
+            /**强制销毁  远程精灵帧资源 需要把纹理和ImageAsset文件销毁 */
+            if (asset['remoteSpriteFrame']) {
+                //@ts-ignore
+                asset.texture?.image?.decRef();
+                //@ts-ignore
+                asset.texture?.destroy();
+
+                //@ts-ignore 强制销毁
+                asset._ref = 0;
+                asset.decRef();
+            }
+        });
+        
         this.idToAssetsMap.clear();
         this.urlToAssetMap.clear();
         this.idToAssetsMap = null;
@@ -85,6 +99,13 @@ export class BundleResData {
                 asset = assets[i];
                 if (asset.refCount == 1) {
                     this.urlToAssetMap.delete(asset['resUrl']);
+                    /**如果是远程精灵帧资源 需要把纹理和ImageAsset文件销毁 */
+                    if (asset['remoteSpriteFrame']) {
+                        //@ts-ignore
+                        asset.texture?.image?.decRef();
+                        //@ts-ignore
+                        asset.texture?.destroy()
+                    }
                 }
                 asset.decRef();
             }

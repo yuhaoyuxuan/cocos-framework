@@ -1,6 +1,5 @@
 import { Asset } from "cc";
 import ObjIdGeneraterUtils from "../utils/ObjIdGeneraterUtils";
-import { ResManager } from "./ResManager";
 
 /**
  * 资源任务
@@ -30,7 +29,6 @@ export class ResTask {
         this.callback = callback;
         this.target = target;
         this.bundleName = bundleName;
-
         this.isCancel = false;
         if (owner.uuid == null) {
             owner.uuid = ObjIdGeneraterUtils.getId;
