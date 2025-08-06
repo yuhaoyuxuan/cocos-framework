@@ -280,7 +280,7 @@ export class PrefabChangeLabel {
                 }
             })
             if (isChanged) {
-                fs.writeFileSync(filePath, JSON.stringify(objs), "utf8")
+                fs.writeFileSync(filePath, JSON.stringify(objs, null, 2), "utf8");
                 let str = filePath;
                 if (this.changeWidgetLabel) {
                     str += "\n    need check Label Widget: " + this.changeWidgetLabel;

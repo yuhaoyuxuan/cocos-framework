@@ -123,7 +123,6 @@ class PrefabChangeLabel {
                             if ((objs[comp.__id__].__type__ == "cc.EditBox" || (objs[comp.__id__].editingDidBegan && objs[comp.__id__].editingDidEnded && objs[comp.__id__].editingReturn))) {
                                 if (!editboxMap[nowNode._parent.__id__]) {
                                     editboxMap[nowNode._parent.__id__] = true;
-                                    console.log("parentNode._prefab.__id__==" + nowNode._parent.__id__);
                                     this.getNodeComponent(objs, parentNode)._contentSize.width = this.getUITransformSize(objs, parentNode).width * RATIO;
                                     this.getNodeComponent(objs, parentNode)._contentSize.height = this.getUITransformSize(objs, parentNode).height * RATIO;
                                     //修改节点缩放
@@ -274,7 +273,7 @@ class PrefabChangeLabel {
                 }
             });
             if (isChanged) {
-                fs.writeFileSync(filePath, JSON.stringify(objs), "utf8");
+                fs.writeFileSync(filePath, JSON.stringify(objs, null, 2), "utf8");
                 let str = filePath;
                 if (this.changeWidgetLabel) {
                     str += "\n    need check Label Widget: " + this.changeWidgetLabel;
