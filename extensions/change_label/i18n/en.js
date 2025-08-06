@@ -1,0 +1,1 @@
+"use strict";module.exports={description:"High-definition font, dynamically adjust the text size within the prefab (zooming node) to achieve high-definition font effect;"};

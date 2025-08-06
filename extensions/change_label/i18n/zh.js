@@ -1,0 +1,1 @@
+"use strict";module.exports={description:"字体高清，动态修改预制体内的文本大小（缩放节点）达到字体高清的效果；"};

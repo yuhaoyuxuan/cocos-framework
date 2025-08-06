@@ -1,0 +1,29 @@
+{
+    "package_version": 2,
+    "version": "1.0.0",
+    "name": "change_label",
+    "description": "i18n:change_label.description",
+    "main": "./dist/main.js",
+    "devDependencies": {
+        "@types/node": "^16.18.126",
+        "typescript": "^4.3.4"
+    },
+    "contributions": {
+        "assets": {
+            "menu": {
+                "m-desc": "methods - 菜单事件处理函数（示例中的 on***Menu 系列）所在的脚本相对路径",
+                "methods": "./dist/Menu.js",
+                "a-desc": "【*******】【assetMenu： - 右击普通资源节点或目录时触发的事件】",
+                "assetMenu": "Menu",
+                "panel-desc": "panelMenu - 右击资源管理面板空白区域时触发的事件",
+                "panelMenu": "onPanelMenu"
+            }
+        }
+    },
+    "author": "slf",
+    "editor": ">=3.5.2",
+    "scripts": {
+        "build": "tsc -b",
+        "watch": "tsc -w"
+    }
+}
