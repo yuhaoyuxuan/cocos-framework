@@ -37,6 +37,10 @@ const RATIO = 2;
 class PrefabChangeLabel {
     constructor() {
         this.changeStr = "";
+        /**修改了Label的widget 需要自己复查确认一下 防止出错 */
+        this.changeWidgetLabel = "";
+        /**Label有子项 需要自己复查确认一下 防止出错 */
+        this.subNodeLabel = "";
     }
     start(filePath) {
         this.changeStr = "";
@@ -97,18 +101,70 @@ class PrefabChangeLabel {
         try {
             let nowNode, parentNode;
             let isChanged = false;
-            /**修改了Label的widget 需要自己复查确认一下 防止出错 */
-            let changeWidgetLabel = "";
-            /**Label有子项 需要自己复查确认一下 防止出错 */
-            let subNodeLabel = "";
             let content = fs.readFileSync(filePath, "utf8");
             let objs = JSON.parse(content);
+            /**标记已经修改的editbox */
+            let editboxMap = {};
+            this.changeWidgetLabel = "";
+            this.subNodeLabel = "";
             objs.forEach(item => {
                 if (item.__type__ == "cc.Label" && item.node && item._fontSize <= FontSize) {
                     isChanged = true;
                     //修改字体大小
                     item._fontSize = item._fontSize * RATIO;
                     nowNode = objs[item.node.__id__];
+                    //如果是EditBox文本
+                    if (nowNode._parent) {
+                        parentNode = objs[nowNode._parent.__id__];
+                        let comp;
+                        //父节点是否有 cc.EditBox 文本需要单独计算
+                        for (let i = 0; i < parentNode._components.length; i++) {
+                            comp = parentNode._components[i];
+                            if ((objs[comp.__id__].__type__ == "cc.EditBox" || (objs[comp.__id__].editingDidBegan && objs[comp.__id__].editingDidEnded && objs[comp.__id__].editingReturn))) {
+                                if (!editboxMap[nowNode._parent.__id__]) {
+                                    editboxMap[nowNode._parent.__id__] = true;
+                                    console.log("parentNode._prefab.__id__==" + nowNode._parent.__id__);
+                                    this.getNodeComponent(objs, parentNode)._contentSize.width = this.getUITransformSize(objs, parentNode).width * RATIO;
+                                    this.getNodeComponent(objs, parentNode)._contentSize.height = this.getUITransformSize(objs, parentNode).height * RATIO;
+                                    //修改节点缩放
+                                    parentNode._lscale.x /= RATIO;
+                                    parentNode._lscale.y /= RATIO;
+                                    //如果本身节点有widget 需要锁定 防止位置错误
+                                    let widget = this.getNodeComponent(objs, parentNode, "cc.Widget");
+                                    if (widget) {
+                                        const _alignFlags = widget._alignFlags;
+                                        let _lockFlags = widget._lockFlags;
+                                        //左右加锁就行
+                                        if (_alignFlags & 8) { //位值 8
+                                            _lockFlags = _lockFlags | 8;
+                                        }
+                                        if (_alignFlags & 32) { //位值 32
+                                            _lockFlags = _lockFlags | 32;
+                                        }
+                                        //单独的上下的话 需要修改值
+                                        if (_alignFlags & 1) { //位值 1
+                                            _lockFlags = _lockFlags | 1;
+                                        }
+                                        if (_alignFlags & 4) { //位值 4
+                                            _lockFlags = _lockFlags | 4;
+                                        }
+                                        widget._lockFlags = _lockFlags;
+                                    }
+                                    //文本父节点
+                                    if (nowNode._parent) {
+                                        const node = objs[parentNode._parent.__id__];
+                                        node._components.forEach((comp) => {
+                                            //父节点是否有 layout组件  子节点缩放影响布局 打开
+                                            if (objs[comp.__id__].__type__ == "cc.Layout") {
+                                                objs[comp.__id__]._affectedByScale = true;
+                                            }
+                                        });
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                    }
                     /**字体行高小于字体大小 会显示不全 */
                     if (item._lineHeight < item._fontSize) {
                         item._lineHeight = item._fontSize;
@@ -127,7 +183,7 @@ class PrefabChangeLabel {
                     if (nowNode._children) {
                         let subNode;
                         if (nowNode._children.length) {
-                            subNodeLabel += nowNode._name + " ";
+                            this.subNodeLabel += nowNode._name + " ";
                         }
                         nowNode._children.forEach((sub) => {
                             subNode = objs[sub.__id__];
@@ -180,33 +236,31 @@ class PrefabChangeLabel {
                         });
                     }
                     //如果本身节点有widget 需要锁定 防止位置错误
-                    nowNode._components.forEach((comp) => {
-                        if (objs[comp.__id__].__type__ == "cc.Widget") {
-                            const widget = objs[comp.__id__];
-                            const _alignFlags = widget._alignFlags;
-                            let _lockFlags = widget._lockFlags;
-                            //左右加锁就行
-                            if (_alignFlags & 8) { //位值 8
-                                _lockFlags = _lockFlags | 8;
-                            }
-                            if (_alignFlags & 32) { //位值 32
-                                _lockFlags = _lockFlags | 32;
-                            }
-                            //单独的上下的话 需要修改值
-                            if (_alignFlags & 1) { //位值 1
-                                widget._top += this.getUITransformSize(objs, nowNode).height / 2 / 2;
-                                _lockFlags = _lockFlags | 1;
-                            }
-                            if (_alignFlags & 4) { //位值 4
-                                widget._bottom += this.getUITransformSize(objs, nowNode).height / 2 / 2;
-                                _lockFlags = _lockFlags | 4;
-                            }
-                            if (widget._lockFlags != _lockFlags) {
-                                widget._lockFlags = _lockFlags;
-                                changeWidgetLabel += nowNode._name + " ";
-                            }
+                    let widget = this.getNodeComponent(objs, nowNode, "cc.Widget");
+                    if (widget) {
+                        const _alignFlags = widget._alignFlags;
+                        let _lockFlags = widget._lockFlags;
+                        //左右加锁就行
+                        if (_alignFlags & 8) { //位值 8
+                            _lockFlags = _lockFlags | 8;
                         }
-                    });
+                        if (_alignFlags & 32) { //位值 32
+                            _lockFlags = _lockFlags | 32;
+                        }
+                        //单独的上下的话 需要修改值
+                        if (_alignFlags & 1) { //位值 1
+                            widget._top += this.getUITransformSize(objs, nowNode).height / 2 / 2;
+                            _lockFlags = _lockFlags | 1;
+                        }
+                        if (_alignFlags & 4) { //位值 4
+                            widget._bottom += this.getUITransformSize(objs, nowNode).height / 2 / 2;
+                            _lockFlags = _lockFlags | 4;
+                        }
+                        if (widget._lockFlags != _lockFlags) {
+                            widget._lockFlags = _lockFlags;
+                            this.changeWidgetLabel += nowNode._name + " ";
+                        }
+                    }
                     //文本父节点
                     if (nowNode._parent) {
                         parentNode = objs[nowNode._parent.__id__];
@@ -222,11 +276,11 @@ class PrefabChangeLabel {
             if (isChanged) {
                 fs.writeFileSync(filePath, JSON.stringify(objs), "utf8");
                 let str = filePath;
-                if (changeWidgetLabel) {
-                    str += "\n    need check Label Widget: " + changeWidgetLabel;
+                if (this.changeWidgetLabel) {
+                    str += "\n    need check Label Widget: " + this.changeWidgetLabel;
                 }
-                if (subNodeLabel) {
-                    str += "\n    need check Label Children: " + subNodeLabel;
+                if (this.subNodeLabel) {
+                    str += "\n    need check Label Children: " + this.subNodeLabel;
                 }
                 this.changeStr += `${str}\n`;
             }
