@@ -1,0 +1,53 @@
+{
+    "package_version": 2,
+    "version": "1.0.0",
+    "name": "dynamic_size",
+    "description": "i18n:dynamic_size.description",
+    "main": "./dist/main.js",
+    "devDependencies": {
+        "@types/node": "^16.18.126",
+        "typescript": "^4.3.4"
+    },
+    "author": "slf",
+    "editor": ">=3.5.2",
+    "scripts": {
+        "build": "tsc -b",
+        "watch": "tsc -w"
+    },
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:menu.panel/i18n:dynamic_size.DesignResolution",
+                "label": "i18n:dynamic_size.Mobile",
+                "message": "dynamic_size:Mobile"
+            },
+            {
+                "path": "i18n:menu.panel/i18n:dynamic_size.DesignResolution",
+                "label": "i18n:dynamic_size.PC",
+                "message": "dynamic_size:PC"
+            },
+            {
+                "path": "i18n:menu.panel/i18n:dynamic_size.DesignResolution",
+                "label": "i18n:dynamic_size.PC_Game",
+                "message": "dynamic_size:PC_Game"
+            }
+        ],
+        "messages": {
+            "dynamic_size:Mobile": {
+                "methods": [
+                    "Mobile"
+                ]
+            },
+            "dynamic_size:PC": {
+                "methods": [
+                    "PC"
+                ]
+            },
+            "dynamic_size:PC_Game": {
+                "methods": [
+                    "PC_Game"
+                ]
+            }
+        }
+    }
+}

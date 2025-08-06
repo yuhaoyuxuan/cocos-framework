@@ -1,0 +1,1 @@
+"use strict";module.exports={description:"动态修改项目设计分辨率和适配模式",DesignResolution:"设计分辨率",PC:"电脑端",PC_Game:"游戏内电脑端",Mobile:"移动端"};
