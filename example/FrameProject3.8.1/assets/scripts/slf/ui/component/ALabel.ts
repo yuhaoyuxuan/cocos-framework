@@ -113,11 +113,6 @@ export class ALabel extends Label {
         this.node.on(NodeEventType.SIZE_CHANGED, this.onSizeChanged, this);
     }
 
-    onDestroy(): void {
-        this.node.off(NodeEventType.SIZE_CHANGED, this.onSizeChanged, this);
-        super.onDestroy();
-    }
-
     private onSizeChanged(): void {
         if (this.labelType != LabelType.ADAPTIVE_WIDTH || !this.realString) {
             return;
